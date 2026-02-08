@@ -15,6 +15,7 @@
     "node": ">=24"
   },
   "scripts": {
+    "prepublishOnly": "npm run build",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "ci": "npm run typecheck && npm run build"
