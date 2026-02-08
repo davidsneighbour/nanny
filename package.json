@@ -1,0 +1,31 @@
+{
+  "name": "@davidsneighbour/nanny",
+  "version": "0.1.0",
+  "description": "Repo management and maintenance CLI for davidsneighbour projects.",
+  "type": "module",
+  "bin": {
+    "nanny": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "ci": "npm run typecheck && npm run build"
+  },
+  "dependencies": {
+    "glob": "13.0.1",
+    "fast-glob": "3.3.3",
+    "jsonc-parser": "3.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "25.2.2",
+    "typescript": "5.9.3"
+  }
+}
