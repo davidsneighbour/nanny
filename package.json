@@ -1,7 +1,7 @@
 {
   "name": "@davidsneighbour/nanny",
   "description": "Repo management and maintenance CLI for davidsneighbour projects.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "dependencies": {
     "@davidsneighbour/release-config": "2026.0.2",
     "fast-glob": "3.3.3",
