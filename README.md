@@ -52,14 +52,3 @@ Exit codes:
 * `0` success
 * `1` invalid arguments or runtime error
 * `2` missing required files
-
-## Integration notes (kollitsch.dev)
-
-Replace these existing calls:
-
-* `node src/scripts/merge-vscode-config.ts` -> `nanny merge-vscode-config`
-* `node src/scripts/merge-vscode-config.ts --check` -> `nanny merge-vscode-config --check`
-* `node ./src/packages/generate-package.ts` -> `nanny generate-package`
-* `node ./src/packages/update-package.ts` -> `nanny update-package`
-
-Wireit entries can call `nanny` directly.
