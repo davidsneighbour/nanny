@@ -1,32 +1,39 @@
 {
   "name": "@davidsneighbour/nanny",
-  "version": "0.1.1",
   "description": "Repo management and maintenance CLI for davidsneighbour projects.",
-  "type": "module",
-  "bin": {
-    "nanny": "dist/cli.js"
+  "version": "0.1.2",
+  "dependencies": {
+    "@davidsneighbour/release-config": "2026.0.2",
+    "fast-glob": "3.3.3",
+    "glob": "13.0.6",
+    "jsonc-parser": "3.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "25.3.0",
+    "typescript": "5.9.3"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "ci": "npm run typecheck && npm run build",
+    "prepublishOnly": "npm run build",
+    "release": "wireit",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "wireit": {
+    "release": {
+      "command": "commit-and-tag-version --sign -a -t \"v\" --releaseCommitMessageFormat \"chore(release): v{{currentTag}}\" -- --no-verify && ./src/scripts/postrelease"
+    }
   },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
+  "bin": {
+    "nanny": "dist/cli.js"
+  },
   "engines": {
     "node": ">=24"
   },
-  "scripts": {
-    "prepublishOnly": "npm run build",
-    "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "ci": "npm run typecheck && npm run build"
-  },
-  "dependencies": {
-    "glob": "13.0.6",
-    "fast-glob": "3.3.3",
-    "jsonc-parser": "3.3.1"
-  },
-  "devDependencies": {
-    "@types/node": "25.3.0",
-    "typescript": "5.9.3"
-  }
+  "type": "module"
 }
