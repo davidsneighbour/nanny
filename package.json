@@ -4,7 +4,7 @@
   "description": "Repo management and maintenance CLI for davidsneighbour projects.",
   "type": "module",
   "bin": {
-    "nanny": "./dist/cli.js"
+    "nanny": "dist/cli.js"
   },
   "files": [
     "dist",
