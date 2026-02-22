@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { glob } from "glob";
+import glob from "fast-glob";
 import { parse } from "jsonc-parser";
 import { NannyError } from "../lib/errors.js";
 
