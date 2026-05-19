@@ -2,6 +2,10 @@
   "name": "@davidsneighbour/nanny",
   "description": "Repo management and maintenance CLI for davidsneighbour projects.",
   "version": "0.1.4",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/davidsneighbour/nanny.git"
+  },
   "dependencies": {
     "@release-it/conventional-changelog": "11.0.0",
     "fast-glob": "3.3.3",
@@ -26,11 +30,11 @@
   "bin": {
     "nanny": "dist/cli.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=24"
   },
-  "type": "module",
-  "publishConfig": {
-    "access": "public"
-  }
+  "type": "module"
 }
