@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import glob from "fast-glob";
-import { parse } from "jsonc-parser";
+
+import { parseJsoncObject } from "../lib/config.js";
 import { NannyError } from "../lib/errors.js";
 import { createPackageGlob, resolvePackagesDir } from "../lib/package-paths.js";
 
@@ -17,7 +18,7 @@ type Options = {
 
 export async function runGeneratePackage(opts: { cwd: string; verbose: boolean; argv: string[] }): Promise<void> {
   const { cwd } = opts;
-  const parsed = parseArgs(opts.argv, cwd, opts.verbose);
+  const parsed = await parseArgs(opts.argv, cwd, opts.verbose);
   const packageGlob = createPackageGlob(cwd, parsed.packagesDir, "**/*.jsonc");
 
   const configPaths = glob.sync(packageGlob, {
@@ -65,7 +66,7 @@ function printHelp(): void {
       "",
       "Options:",
       "  --package <path>       Path to package.json (default: <cwd>/package.json)",
-      "  --packages-dir <path>  Package fragments directory (default: NANNY_PACKAGES_DIR or src/packages)",
+      "  --packages-dir <path>  Package fragments directory (default: config, NANNY_PACKAGES_DIR, or src/packages)",
       "  --keys <list>          Comma-separated list of keys to preserve from package.json",
       "  --dry-run              Print merged JSON to stdout, do not write file",
       "  --verbose              More logs",
@@ -81,7 +82,7 @@ function printHelp(): void {
   );
 }
 
-function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Options {
+async function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Promise<Options> {
   const defaultKeysToPreserve: string[] = [
     "name",
     "description",
@@ -97,12 +98,14 @@ function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Options
     "type",
   ];
 
+  let packagesDirOverride: string | undefined;
+
   const o: Options = {
     dryRun: false,
     pkgPath: path.resolve(cwd, "package.json"),
     verbose: globalVerbose,
     keysToPreserve: defaultKeysToPreserve,
-    packagesDir: resolvePackagesDir(cwd, undefined),
+    packagesDir: "",
   };
 
   for (let i = 0; i < argv.length; i++) {
@@ -122,7 +125,7 @@ function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Options
       case "--packages-dir": {
         const v = argv[i + 1];
         if (!v) throw new NannyError("Missing value for --packages-dir", 1);
-        o.packagesDir = resolvePackagesDir(cwd, v);
+        packagesDirOverride = v;
         i++;
         break;
       }
@@ -140,20 +143,23 @@ function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Options
         break;
       }
       default:
-        throw new NannyError(`Unknown argument: ${a}`, 1);
+        throw new NannyError(`Unknown argument: ${String(a)}`, 1);
     }
   }
 
+  o.packagesDir = await resolvePackagesDir(cwd, packagesDirOverride);
   return o;
 }
 
 function readJsonc(filePath: string): JsonObject {
   try {
     const raw = fs.readFileSync(filePath, "utf8");
-    const parsed = parse(raw) as unknown;
-    if (!isPlainObject(parsed)) throw new NannyError(`JSON root must be an object: ${filePath}`, 1);
-    return parsed;
+    return parseJsoncObject(filePath, raw);
   } catch (e: unknown) {
+    if (e instanceof NannyError) {
+      throw e;
+    }
+
     const msg = e instanceof Error ? e.message : String(e);
     throw new NannyError(`Failed to read/parse ${filePath}: ${msg}`, 1);
   }
