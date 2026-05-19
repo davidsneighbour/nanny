@@ -3,9 +3,10 @@
   "description": "Repo management and maintenance CLI for davidsneighbour projects.",
   "version": "0.1.4",
   "dependencies": {
-    "@davidsneighbour/release-config": "2026.0.5",
+    "@release-it/conventional-changelog": "11.0.0",
     "fast-glob": "3.3.3",
-    "jsonc-parser": "3.3.1"
+    "jsonc-parser": "3.3.1",
+    "release-it": "20.0.1"
   },
   "devDependencies": {
     "@types/node": "25.9.0",
@@ -15,13 +16,8 @@
     "build": "tsc -p tsconfig.json",
     "ci": "npm run typecheck && npm run build",
     "prepublishOnly": "npm run build",
-    "release": "wireit",
+    "release": "release-it --ci",
     "typecheck": "tsc -p tsconfig.json --noEmit"
-  },
-  "wireit": {
-    "release": {
-      "command": "commit-and-tag-version --sign -a -t \"v\" --releaseCommitMessageFormat \"chore(release): v{{currentTag}}\" -- --no-verify"
-    }
   },
   "files": [
     "dist",
@@ -34,5 +30,8 @@
   "engines": {
     "node": ">=24"
   },
-  "type": "module"
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  }
 }
