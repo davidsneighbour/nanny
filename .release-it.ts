@@ -2,10 +2,12 @@ import type { Config } from 'release-it';
 
 const config = {
   npm: {
-    skipChecks: true
+    publish: false,
+    skipChecks: true,
   },
   git: {
     requireCleanWorkingDir: true,
+    requireUpstream: true,
     commit: true,
     commitMessage: 'chore(release): v${version}',
     commitArgs: ['--no-verify'],
@@ -26,9 +28,9 @@ const config = {
       preset: {
         name: 'conventionalcommits',
         commitUrlFormat:
-          'https://github.com/davidsneighbour/kollitsch.dev/commit/{{hash}}',
+          'https://github.com/davidsneighbour/nanny/commit/{{hash}}',
         compareUrlFormat:
-          'https://github.com/davidsneighbour/kollitsch.dev/compare/{{previousTag}}...{{currentTag}}',
+          'https://github.com/davidsneighbour/nanny/compare/{{previousTag}}...{{currentTag}}',
         types: [
           { type: 'content', section: 'Content' },
           { type: 'feat', section: 'Features' },
