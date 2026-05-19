@@ -3,6 +3,7 @@ import path from "node:path";
 import glob from "fast-glob";
 import { parse } from "jsonc-parser";
 import { NannyError } from "../lib/errors.js";
+import { createPackageGlob, resolvePackagesDir, toPosixRelative } from "../lib/package-paths.js";
 
 type JsonObject = Record<string, unknown>;
 
@@ -15,17 +16,17 @@ type PackageJson = {
 };
 
 const CONFIG = {
-  packageJsoncGlob: "./src/packages/*/*.jsonc",
   rootPkgPath: "./package.json",
 } as const;
 
 type Options = {
   verbose: boolean;
   help: boolean;
+  packagesDir: string;
 };
 
 export async function runUpdatePackage(opts: { cwd: string; verbose: boolean; argv: string[] }): Promise<void> {
-  const options = parseArgs(opts.argv, opts.verbose);
+  const options = parseArgs(opts.argv, opts.cwd, opts.verbose);
 
   if (options.help) {
     printHelp();
@@ -38,27 +39,26 @@ export async function runUpdatePackage(opts: { cwd: string; verbose: boolean; ar
   }
 
   const rootPkg = loadJson<PackageJson>(rootPkgAbs);
+  const packageJsoncGlob = createPackageGlob(opts.cwd, options.packagesDir, "*/*.jsonc");
+  const packageDisplayPath = toPosixRelative(opts.cwd, options.packagesDir);
+  const jsoncFiles = await glob(packageJsoncGlob, { dot: false, cwd: opts.cwd, absolute: false });
 
-  const jsoncFiles = await glob(CONFIG.packageJsoncGlob, { dot: false, cwd: opts.cwd, absolute: false });
-
-  // 1) Update dependency versions
   for (const fileRel of jsoncFiles) {
     const file = path.resolve(opts.cwd, fileRel);
     try {
       const json = loadJsonc<PackageJson>(file);
       if (replaceVersions(json, rootPkg)) {
         fs.writeFileSync(file, `${jsonOut(json)}\n`, "utf8");
-        console.log(`✔ Updated: ${fileRel}`);
+        console.log(`Updated: ${fileRel}`);
       } else {
-        console.log(`✘ No changes: ${fileRel}`);
+        console.log(`No changes: ${fileRel}`);
       }
     } catch (e: unknown) {
       const err = e instanceof Error ? e : new Error(String(e));
-      console.error(`✖ Failed to process ${fileRel}: ${err.message}`);
+      console.error(`Failed to process ${fileRel}: ${err.message}`);
     }
   }
 
-  // 2) Unused root deps
   const usedDeps = collectUsedDeps(jsoncFiles.map((f) => path.resolve(opts.cwd, f)));
   const unusedDependencies: Array<{ name: string; version: string }> = [];
 
@@ -71,15 +71,14 @@ export async function runUpdatePackage(opts: { cwd: string; verbose: boolean; ar
   }
 
   if (unusedDependencies.length > 0) {
-    header("🔍 Unused dependencies (in root, not in src/packages/*.jsonc):");
+    header(`Unused dependencies (in root, not in ${packageDisplayPath}/*.jsonc):`);
     for (const { name, version } of unusedDependencies.sort((a, b) => a.name.localeCompare(b.name))) {
       console.log(`  "${name}": "${version}",`);
     }
   } else {
-    header("✅ All dependencies are referenced in src/packages/*.jsonc.");
+    header(`All dependencies are referenced in ${packageDisplayPath}/*.jsonc.`);
   }
 
-  // 3) Scripts & Wireit audits
   const { perFileScripts, perFileWireit } = collectScriptsAndWireit(jsoncFiles.map((f) => path.resolve(opts.cwd, f)));
 
   const scriptsMissing = findMissingFromPackages(
@@ -98,58 +97,58 @@ export async function runUpdatePackage(opts: { cwd: string; verbose: boolean; ar
   const scriptDupes = findDuplicateKeys(perFileScripts.map(({ file, scripts }) => ({ file, map: scripts })));
   const wireitDupes = findDuplicateKeys(perFileWireit.map(({ file, wireit }) => ({ file, map: wireit })));
 
-  header("🧪 Scripts audit (root vs src/packages/*.jsonc)");
+  header(`Scripts audit (root vs ${packageDisplayPath}/*.jsonc)`);
   if (scriptsMissing.length) {
-    console.log("• Missing (in root, not listed in any src/packages/*.jsonc):");
+    console.log(`- Missing (in root, not listed in any ${packageDisplayPath}/*.jsonc):`);
     scriptsMissing.forEach((n) => console.log(`  - ${n}`));
   } else {
-    console.log("• No missing script entries.");
+    console.log("- No missing script entries.");
   }
 
   if (scriptsChanged.length) {
-    console.log("• Changed (defined in both, but command differs):");
+    console.log("- Changed (defined in both, but command differs):");
     for (const c of scriptsChanged) {
       console.log(`  - ${c.name} in ${path.relative(opts.cwd, c.file)}\n      root: ${c.root}\n      file: ${c.found}`);
     }
   } else {
-    console.log("• No changed script entries.");
+    console.log("- No changed script entries.");
   }
 
   if (scriptDupes.length) {
-    console.log("• Duplicates (same script key in multiple files):");
+    console.log("- Duplicates (same script key in multiple files):");
     for (const d of scriptDupes) {
       console.log(`  - ${d.name}`);
       d.files.forEach((f) => console.log(`      ${path.relative(opts.cwd, f)}`));
     }
   } else {
-    console.log("• No duplicate script entries.");
+    console.log("- No duplicate script entries.");
   }
 
-  header("🧩 Wireit audit (root vs src/packages/*.jsonc)");
+  header(`Wireit audit (root vs ${packageDisplayPath}/*.jsonc)`);
   if (wireitMissing.length) {
-    console.log("• Missing (in root, not listed in any src-packages/*.jsonc):");
+    console.log(`- Missing (in root, not listed in any ${packageDisplayPath}/*.jsonc):`);
     wireitMissing.forEach((n) => console.log(`  - ${n}`));
   } else {
-    console.log("• No missing wireit entries.");
+    console.log("- No missing wireit entries.");
   }
 
   if (wireitChanged.length) {
-    console.log("• Changed (defined in both, but config differs):");
+    console.log("- Changed (defined in both, but config differs):");
     for (const c of wireitChanged) {
       console.log(`  - ${c.name} in ${path.relative(opts.cwd, c.file)}`);
     }
   } else {
-    console.log("• No changed wireit entries.");
+    console.log("- No changed wireit entries.");
   }
 
   if (wireitDupes.length) {
-    console.log("• Duplicates (same wireit key in multiple files):");
+    console.log("- Duplicates (same wireit key in multiple files):");
     for (const d of wireitDupes) {
       console.log(`  - ${d.name}`);
       d.files.forEach((f) => console.log(`      ${path.relative(opts.cwd, f)}`));
     }
   } else {
-    console.log("• No duplicate wireit entries.");
+    console.log("- No duplicate wireit entries.");
   }
 }
 
@@ -160,11 +159,12 @@ function printHelp(): void {
       "  nanny update-package [options]",
       "",
       "Options:",
-      "  --verbose    More logs",
-      "  --help       Show help for this command",
+      "  --packages-dir <path>  Package fragments directory (default: NANNY_PACKAGES_DIR or src/packages)",
+      "  --verbose              More logs",
+      "  --help                 Show help for this command",
       "",
       "What it does:",
-      "  1) Updates dependency versions in ./src/packages/*/*.jsonc from the root package.json",
+      "  1) Updates dependency versions in <packages-dir>/*/*.jsonc from the root package.json",
       "  2) Reports unused root dependencies",
       "  3) Audits scripts/wireit for missing, changed, and duplicated entries",
       "",
@@ -172,13 +172,33 @@ function printHelp(): void {
   );
 }
 
-function parseArgs(argv: string[], globalVerbose: boolean): Options {
-  const o: Options = { verbose: globalVerbose, help: false };
-  for (const a of argv) {
-    if (a === "--help") o.help = true;
-    else if (a === "--verbose") o.verbose = true;
-    else throw new NannyError(`Unknown argument: ${a}`, 1);
+function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Options {
+  const o: Options = { verbose: globalVerbose, help: false, packagesDir: resolvePackagesDir(cwd, undefined) };
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+
+    switch (arg) {
+      case "--help":
+        o.help = true;
+        break;
+      case "--verbose":
+        o.verbose = true;
+        break;
+      case "--packages-dir": {
+        const value = argv[index + 1];
+        if (typeof value !== "string" || value.length === 0) {
+          throw new NannyError("Missing value for --packages-dir", 1);
+        }
+        o.packagesDir = resolvePackagesDir(cwd, value);
+        index += 1;
+        break;
+      }
+      default:
+        throw new NannyError(`Unknown argument: ${String(arg)}`, 1);
+    }
   }
+
   return o;
 }
 
@@ -238,7 +258,7 @@ function collectScriptsAndWireit(files: string[]) {
       }
     } catch (e: unknown) {
       const err = e instanceof Error ? e : new Error(String(e));
-      console.error(`✖ Failed to read ${file}: ${err.message}`);
+      console.error(`Failed to read ${file}: ${err.message}`);
     }
   }
 
