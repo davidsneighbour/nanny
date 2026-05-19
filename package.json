@@ -20,6 +20,7 @@
     "build": "tsc -p tsconfig.json",
     "ci": "npm run typecheck && npm run build",
     "prepublishOnly": "npm run build",
+    "release": "npm run ci && release-it",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "files": [
