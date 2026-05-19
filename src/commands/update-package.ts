@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import glob from "fast-glob";
-import { parse } from "jsonc-parser";
+
+import { parseJsoncObject } from "../lib/config.js";
 import { NannyError } from "../lib/errors.js";
 import { createPackageGlob, resolvePackagesDir, toPosixRelative } from "../lib/package-paths.js";
 
@@ -26,7 +27,7 @@ type Options = {
 };
 
 export async function runUpdatePackage(opts: { cwd: string; verbose: boolean; argv: string[] }): Promise<void> {
-  const options = parseArgs(opts.argv, opts.cwd, opts.verbose);
+  const options = await parseArgs(opts.argv, opts.cwd, opts.verbose);
 
   if (options.help) {
     printHelp();
@@ -159,7 +160,7 @@ function printHelp(): void {
       "  nanny update-package [options]",
       "",
       "Options:",
-      "  --packages-dir <path>  Package fragments directory (default: NANNY_PACKAGES_DIR or src/packages)",
+      "  --packages-dir <path>  Package fragments directory (default: config, NANNY_PACKAGES_DIR, or src/packages)",
       "  --verbose              More logs",
       "  --help                 Show help for this command",
       "",
@@ -172,8 +173,9 @@ function printHelp(): void {
   );
 }
 
-function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Options {
-  const o: Options = { verbose: globalVerbose, help: false, packagesDir: resolvePackagesDir(cwd, undefined) };
+async function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Promise<Options> {
+  let packagesDirOverride: string | undefined;
+  const o: Options = { verbose: globalVerbose, help: false, packagesDir: "" };
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -190,7 +192,7 @@ function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Options
         if (typeof value !== "string" || value.length === 0) {
           throw new NannyError("Missing value for --packages-dir", 1);
         }
-        o.packagesDir = resolvePackagesDir(cwd, value);
+        packagesDirOverride = value;
         index += 1;
         break;
       }
@@ -199,12 +201,13 @@ function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Options
     }
   }
 
+  o.packagesDir = await resolvePackagesDir(cwd, packagesDirOverride);
   return o;
 }
 
 function loadJsonc<T = unknown>(filePath: string): T {
   const content = fs.readFileSync(filePath, "utf8");
-  return parse(content) as T;
+  return parseJsoncObject(filePath, content) as T;
 }
 
 function loadJson<T = unknown>(filePath: string): T {
