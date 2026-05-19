@@ -2,7 +2,7 @@ import type { Config } from 'release-it';
 
 const config = {
   npm: {
-    publish: false,
+    skipChecks: true
   },
   git: {
     requireCleanWorkingDir: true,
