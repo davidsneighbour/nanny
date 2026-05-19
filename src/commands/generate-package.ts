@@ -3,6 +3,7 @@ import path from "node:path";
 import glob from "fast-glob";
 import { parse } from "jsonc-parser";
 import { NannyError } from "../lib/errors.js";
+import { createPackageGlob, resolvePackagesDir } from "../lib/package-paths.js";
 
 type JsonObject = Record<string, unknown>;
 
@@ -11,13 +12,15 @@ type Options = {
   verbose: boolean;
   dryRun: boolean;
   keysToPreserve: string[];
+  packagesDir: string;
 };
 
 export async function runGeneratePackage(opts: { cwd: string; verbose: boolean; argv: string[] }): Promise<void> {
   const { cwd } = opts;
   const parsed = parseArgs(opts.argv, cwd, opts.verbose);
+  const packageGlob = createPackageGlob(cwd, parsed.packagesDir, "**/*.jsonc");
 
-  const configPaths = glob.sync("src/packages/**/*.jsonc", {
+  const configPaths = glob.sync(packageGlob, {
     absolute: true,
     cwd,
   });
@@ -25,6 +28,7 @@ export async function runGeneratePackage(opts: { cwd: string; verbose: boolean; 
   if (parsed.verbose) {
     console.error(`> Using keys: ${parsed.keysToPreserve.join(", ")}`);
     console.error(`> Reading package.json from ${parsed.pkgPath}`);
+    console.error(`> Reading package fragments from ${parsed.packagesDir}`);
   }
 
   const pkg = readJsonc(parsed.pkgPath);
@@ -60,15 +64,17 @@ function printHelp(): void {
       "  nanny generate-package [options]",
       "",
       "Options:",
-      "  --package <path>   Path to package.json (default: <cwd>/package.json)",
-      "  --keys <list>      Comma-separated list of keys to preserve from package.json",
-      "  --dry-run          Print merged JSON to stdout, do not write file",
-      "  --verbose          More logs",
-      "  --help             Show help for this command",
+      "  --package <path>       Path to package.json (default: <cwd>/package.json)",
+      "  --packages-dir <path>  Package fragments directory (default: NANNY_PACKAGES_DIR or src/packages)",
+      "  --keys <list>          Comma-separated list of keys to preserve from package.json",
+      "  --dry-run              Print merged JSON to stdout, do not write file",
+      "  --verbose              More logs",
+      "  --help                 Show help for this command",
       "",
       "Examples:",
       "  nanny generate-package",
       "  nanny generate-package --dry-run",
+      "  nanny generate-package --packages-dir config/packages --dry-run",
       "  nanny generate-package --keys name,description,version",
       "",
     ].join("\n"),
@@ -96,6 +102,7 @@ function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Options
     pkgPath: path.resolve(cwd, "package.json"),
     verbose: globalVerbose,
     keysToPreserve: defaultKeysToPreserve,
+    packagesDir: resolvePackagesDir(cwd, undefined),
   };
 
   for (let i = 0; i < argv.length; i++) {
@@ -109,6 +116,13 @@ function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Options
         const v = argv[i + 1];
         if (!v) throw new NannyError("Missing value for --package", 1);
         o.pkgPath = path.resolve(cwd, v);
+        i++;
+        break;
+      }
+      case "--packages-dir": {
+        const v = argv[i + 1];
+        if (!v) throw new NannyError("Missing value for --packages-dir", 1);
+        o.packagesDir = resolvePackagesDir(cwd, v);
         i++;
         break;
       }
