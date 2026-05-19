@@ -20,7 +20,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - run: npm install -g npm@latest
-      - run: npm ci
+      - run: npm ci && npm run ci
 
       - name: Configure git author
         run: |
