@@ -21,6 +21,7 @@
     "ci": "npm run typecheck && npm run build",
     "prepublishOnly": "npm run build",
     "release": "npm run ci && release-it",
+    "test:package-init": "npm run build && node dist/tests/package-init.test.js",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "files": [
