@@ -18,6 +18,21 @@ Commands run relative to `--cwd` (defaults to the current working directory).
 
 ## Commands
 
+### package-init
+
+Creates the initial package fragment files expected by `update-package` and `generate-package`.
+
+```bash
+nanny package-init [--package <path>] [--force] [--verbose]
+```
+
+This command reads the current `package.json` and writes:
+
+* `src/packages/legacy/starter.jsonc` with `scripts`, `dependencies`, and `devDependencies`
+* `src/packages/system/default.jsonc` with all other package fields
+
+It leaves `package.json` unchanged. Use `nanny generate-package --dry-run` afterwards to verify the generated object without overwriting the existing file.
+
 ### generate-package
 
 Merges all `src/packages/**/*.jsonc` into `package.json`, while preserving a configurable set of keys from the original `package.json`.
@@ -46,6 +61,14 @@ Merges `.vscode/settings.base.jsonc` and `.vscode/settings.local.jsonc` (optiona
 ```bash
 nanny merge-vscode-config [--base <path>] [--local <path>] [--out <path>] [--check] [--dry-run] [--verbose]
 ```
+
+## Tests
+
+```bash
+npm run test:package-init
+```
+
+The package init test creates a temporary fixture, runs `nanny package-init`, then runs `nanny generate-package --dry-run` and compares the generated object with the original fixture package object. It does not overwrite the repository `package.json`.
 
 Exit codes:
 
