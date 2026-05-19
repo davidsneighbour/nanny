@@ -2,17 +2,19 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { NannyError } from "../lib/errors.js";
+import { resolvePackageFragmentPath, resolvePackagesDir, toPosixRelative } from "../lib/package-paths.js";
 
 type JsonObject = Record<string, unknown>;
 
 type Options = {
   force: boolean;
   packagePath: string;
+  packagesDir: string;
   verbose: boolean;
 };
 
-const STARTER_RELATIVE_PATH = "src/packages/legacy/starter.jsonc";
-const DEFAULT_RELATIVE_PATH = "src/packages/system/default.jsonc";
+const STARTER_FRAGMENT_PATH = "legacy/starter.jsonc";
+const DEFAULT_FRAGMENT_PATH = "system/default.jsonc";
 const EXTRACTED_KEYS = ["scripts", "dependencies", "devDependencies"] as const;
 
 export async function runPackageInit(opts: { cwd: string; verbose: boolean; argv: string[] }): Promise<void> {
@@ -22,8 +24,10 @@ export async function runPackageInit(opts: { cwd: string; verbose: boolean; argv
   const starterPackage = pickExtractedFields(sourcePackage);
   const defaultPackage = omitExtractedFields(sourcePackage);
 
-  const starterPath = path.resolve(opts.cwd, STARTER_RELATIVE_PATH);
-  const defaultPath = path.resolve(opts.cwd, DEFAULT_RELATIVE_PATH);
+  const starterPath = resolvePackageFragmentPath(parsed.packagesDir, STARTER_FRAGMENT_PATH);
+  const defaultPath = resolvePackageFragmentPath(parsed.packagesDir, DEFAULT_FRAGMENT_PATH);
+  const starterDisplayPath = toPosixRelative(opts.cwd, starterPath);
+  const defaultDisplayPath = toPosixRelative(opts.cwd, defaultPath);
 
   ensureWritable(starterPath, parsed.force);
   ensureWritable(defaultPath, parsed.force);
@@ -41,8 +45,8 @@ export async function runPackageInit(opts: { cwd: string; verbose: boolean; argv
     [
       "✔ Package initialisation complete.",
       "Created package fragments:",
-      `  - ${STARTER_RELATIVE_PATH}`,
-      `  - ${DEFAULT_RELATIVE_PATH}`,
+      `  - ${starterDisplayPath}`,
+      `  - ${defaultDisplayPath}`,
       "Run `nanny generate-package --dry-run` to verify the generated package.json without overwriting it.",
     ].join("\n"),
   );
@@ -55,14 +59,15 @@ function printHelp(): void {
       "  nanny package-init [options]",
       "",
       "Options:",
-      "  --package <path>   Path to package.json (default: <cwd>/package.json)",
-      "  --force            Overwrite existing src/packages/legacy/starter.jsonc and src/packages/system/default.jsonc",
-      "  --verbose          More logs",
-      "  --help             Show help for this command",
+      "  --package <path>       Path to package.json (default: <cwd>/package.json)",
+      "  --packages-dir <path>  Package fragments directory (default: NANNY_PACKAGES_DIR or src/packages)",
+      "  --force                Overwrite existing starter and default package fragments",
+      "  --verbose              More logs",
+      "  --help                 Show help for this command",
       "",
       "What it does:",
-      `  1) Writes scripts, dependencies, and devDependencies to ${STARTER_RELATIVE_PATH}`,
-      `  2) Writes all other package.json fields to ${DEFAULT_RELATIVE_PATH}`,
+      "  1) Writes scripts, dependencies, and devDependencies to <packages-dir>/legacy/starter.jsonc",
+      "  2) Writes all other package.json fields to <packages-dir>/system/default.jsonc",
       "  3) Leaves package.json unchanged so generate-package can be tested with --dry-run",
       "",
     ].join("\n"),
@@ -73,6 +78,7 @@ function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Options
   const options: Options = {
     force: false,
     packagePath: path.resolve(cwd, "package.json"),
+    packagesDir: resolvePackagesDir(cwd, undefined),
     verbose: globalVerbose,
   };
 
@@ -89,6 +95,15 @@ function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Options
           throw new NannyError("Missing value for --package", 1);
         }
         options.packagePath = path.resolve(cwd, value);
+        i += 1;
+        break;
+      }
+      case "--packages-dir": {
+        const value = argv[i + 1];
+        if (typeof value !== "string" || value.length === 0) {
+          throw new NannyError("Missing value for --packages-dir", 1);
+        }
+        options.packagesDir = resolvePackagesDir(cwd, value);
         i += 1;
         break;
       }
