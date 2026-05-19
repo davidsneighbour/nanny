@@ -22,10 +22,7 @@ updates:
       # do not update @davidsneighbour packages, that is done via renovate
       - dependency-name: "@davidsneighbour/*"
     cooldown:
-      default-days: 5
-      semver-major-days: 30
-      semver-minor-days: 7
-      semver-patch-days: 3
+      default-days: 7
       # include:
       #   - "requests"
       exclude:
@@ -47,10 +44,7 @@ updates:
     labels:
       - type:dependencies
     cooldown:
-      default-days: 5
-      semver-major-days: 30
-      semver-minor-days: 7
-      semver-patch-days: 3
+      default-days: 7
       # include:
       #   - "requests"
       exclude:
@@ -72,10 +66,7 @@ updates:
     labels:
       - type:dependencies
     cooldown:
-      default-days: 5
-      semver-major-days: 30
-      semver-minor-days: 7
-      semver-patch-days: 3
+      default-days: 7
       # include:
       #   - "requests"
       exclude:
