@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.3.0](https://github.com/davidsneighbour/nanny/compare/v0.2.0...v0.3.0) (2026-05-19)
+
+### Features
+
+* **package:** add package init command ([cbfe11b](https://github.com/davidsneighbour/nanny/commit/cbfe11b34714ee12008e9a72798b27e29846e137))
+* **package:** wire package init command ([97f5b34](https://github.com/davidsneighbour/nanny/commit/97f5b34231e36222aade9fc4fbed0a4298bd1358))
+
+### Bug Fixes
+
+* remove static jsonc files ([6d6a75b](https://github.com/davidsneighbour/nanny/commit/6d6a75bf5d23cf297aa2a2a4d7e58233296c5613))
+
+### Build
+
+* **deps:** update dependencies ([c7ca28f](https://github.com/davidsneighbour/nanny/commit/c7ca28ff1686f86bf2de2ed6037e9e5decba16f2))
+
+### Chores
+
+* **package:** add default package fragment ([5072029](https://github.com/davidsneighbour/nanny/commit/507202976955323b2ec8c91b2019d19f1949e344))
+* **package:** add starter package fragment ([fc93d1f](https://github.com/davidsneighbour/nanny/commit/fc93d1fae07ae11041c701edfe2bcb77537b94e1))
+
+### CI
+
+* **fix:** cache poisening issue ([0f09bfc](https://github.com/davidsneighbour/nanny/commit/0f09bfccd3a9b1b94fd93e0cfb13696aa6b62560))
+* **fix:** move to dnbhq renovate config ([74f091d](https://github.com/davidsneighbour/nanny/commit/74f091de3709af7ae2c329ce041e234bd258d86c))
+* **fix:** simplify dependabot cooldown config ([1282273](https://github.com/davidsneighbour/nanny/commit/1282273bf13cc76faf3102a0ab53d0ac02f17ce0))
+
+### Documentation
+
+* **package:** document package init command ([da07776](https://github.com/davidsneighbour/nanny/commit/da07776dc7351e0d3c516ce29831ba1823d634c7))
+
+### Tests
+
+* **package:** add package init test script ([1953c77](https://github.com/davidsneighbour/nanny/commit/1953c779d81f49f800372d1086f44a11e88496f6))
+* **package:** verify init roundtrip ([79055e4](https://github.com/davidsneighbour/nanny/commit/79055e4b282f3bd34a135a78210caa97e11d3fdb))
+
 ## [0.2.0](https://github.com/davidsneighbour/nanny/compare/v0.1.4...v0.2.0) (2026-05-19)
 
 ### Build
