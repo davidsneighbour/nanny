@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.4.0](https://github.com/davidsneighbour/nanny/compare/v0.3.0...v0.4.0) (2026-05-19)
+
+### Features
+
+* **config:** add direct config loader dependencies ([b793987](https://github.com/davidsneighbour/nanny/commit/b793987153d28e8f1df3b6382a9d7f0f6d2fab9a))
+* **config:** add nanny config loader ([fef1a76](https://github.com/davidsneighbour/nanny/commit/fef1a7650c0afb11ec7535857d0cddf690fb0459))
+* **config:** load package generation settings from config ([864a9be](https://github.com/davidsneighbour/nanny/commit/864a9be471621af75373bdc778aca2be911d576c))
+* **config:** load package init settings from config ([2c069e7](https://github.com/davidsneighbour/nanny/commit/2c069e7632f234876b872e77dff36ecbbf80b324))
+* **config:** load package update settings from config ([fa05238](https://github.com/davidsneighbour/nanny/commit/fa052381a18195b2873e19c5c9b0de513c6b6f8c))
+* **config:** resolve package fragments from config ([04d2c78](https://github.com/davidsneighbour/nanny/commit/04d2c78c13d2dea58076171af8b89c1bb65378f3))
+* **package:** add configurable package paths ([0cf6d17](https://github.com/davidsneighbour/nanny/commit/0cf6d17cc31df71f3f79e7e2994f71df5ebb376d))
+* **package:** support configurable generate package dir ([3c0482e](https://github.com/davidsneighbour/nanny/commit/3c0482e3b18dd755bec1488ce946b2e6b732132b))
+* **package:** support configurable init package dir ([06b762d](https://github.com/davidsneighbour/nanny/commit/06b762d376e0df95859555f52a57c5ca4ff64f64))
+* **package:** support configurable update package dir ([c2ea335](https://github.com/davidsneighbour/nanny/commit/c2ea335b65b0c5210dc0881b5196723b6da20496))
+
+### Bug Fixes
+
+* rework type errors ([446a71f](https://github.com/davidsneighbour/nanny/commit/446a71f7ddc9029454e75ab74935793b5de6fa5a))
+
+### Build
+
+* **deps:** update dependencies ([284a51e](https://github.com/davidsneighbour/nanny/commit/284a51e91bb81e3ab79d42867e4d534ea2622474))
+
+### Documentation
+
+* **config:** document nanny configuration loading ([12a7ca9](https://github.com/davidsneighbour/nanny/commit/12a7ca9b5f5f4b371d92ccf38d1ea9f916d6333e))
+* **package:** document configurable package dir ([9c787a4](https://github.com/davidsneighbour/nanny/commit/9c787a468cbb25944ced414e3874ab20399f4067))
+
+### Refactoring
+
+* **config:** avoid undefined config loader options ([9292944](https://github.com/davidsneighbour/nanny/commit/9292944bb97004c8de0e77e731fcf95731b24224))
+
+### Tests
+
+* **package:** cover custom packages dir ([7ee939f](https://github.com/davidsneighbour/nanny/commit/7ee939f7bef640b6653ea53a02a50606efaa85e9))
+
 ## [0.3.0](https://github.com/davidsneighbour/nanny/compare/v0.2.0...v0.3.0) (2026-05-19)
 
 ### Features
