@@ -20,7 +20,68 @@ Package fragment commands read their fragment directory from this precedence ord
 
 * `--packages-dir <path>`
 * `NANNY_PACKAGES_DIR`
+* Nanny configuration loaded through `c12`
 * `src/packages`
+
+## Configuration
+
+Nanny uses `c12` to find and load project configuration. JSONC parsing is handled through `confbox`, so configuration files ending in `.jsonc` are supported.
+
+The current configuration object supports:
+
+* `packagesDir`: Directory that contains package fragments for `package-init`, `generate-package`, and `update-package`. Defaults to `src/packages`.
+
+Supported configuration locations include:
+
+* `nanny.config.ts`
+* `nanny.config.js`
+* `nanny.config.mjs`
+* `nanny.config.cjs`
+* `nanny.config.json`
+* `nanny.config.jsonc`
+* `nanny.config.yaml`
+* `nanny.config.yml`
+* `.nannyrc`
+* `.nannyrc.json`
+* `.nannyrc.jsonc`
+* `.nannyrc.yaml`
+* `.nannyrc.yml`
+* `.config/nanny.jsonc`
+* the `nanny` property in `package.json`
+
+Example `nanny.config.jsonc`:
+
+```jsonc
+{
+  // Directory that contains package fragments.
+  "packagesDir": "config/package-particles"
+}
+```
+
+Example `nanny.config.ts`:
+
+```ts
+export default {
+  packagesDir: "config/package-particles",
+};
+```
+
+Example `package.json` configuration:
+
+```json
+{
+  "nanny": {
+    "packagesDir": "config/package-particles"
+  }
+}
+```
+
+CLI and environment overrides still take precedence over configuration files:
+
+```bash
+nanny generate-package --packages-dir config/package-particles --dry-run
+NANNY_PACKAGES_DIR=config/package-particles nanny update-package
+```
 
 ## Commands
 
