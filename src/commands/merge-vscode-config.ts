@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
-import { parse as parseJsonc, printParseErrorCode, type ParseError } from "jsonc-parser";
+import { parseJSONC } from "confbox";
 import { NannyError } from "../lib/errors.js";
 
 type JsonObject = Record<string, unknown>;
@@ -140,19 +140,17 @@ function printHelp(): void {
 
 function readJsoncObject(filePath: string, verbose: boolean): JsonObject {
   const raw = fs.readFileSync(filePath, "utf8");
-  const errors: ParseError[] = [];
-  const parsed = parseJsonc(raw, errors, { allowTrailingComma: true }) as unknown;
 
-  if (errors.length > 0) {
-    const details = errors
-      .slice(0, 10)
-      .map((e) => `${printParseErrorCode(e.error)} at offset ${e.offset}`)
-      .join("; ");
+  let parsed: unknown;
+  try {
+    parsed = parseJSONC(raw);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
     if (verbose) {
       console.error(`[nanny merge-vscode-config] Failed to parse JSONC: ${filePath}`);
-      console.error(details);
+      console.error(message);
     }
-    throw new NannyError(`Invalid JSONC in ${filePath}: ${details}`, 1);
+    throw new NannyError(`Invalid JSONC in ${filePath}: ${message}`, 1);
   }
 
   if (!isPlainObject(parsed)) {

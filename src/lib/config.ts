@@ -47,7 +47,7 @@ export async function loadNannyConfig(options: LoadNannyConfigOptions): Promise<
   const overrides = packagesDirOverride ? { packagesDir: packagesDirOverride } : undefined;
 
   try {
-    const result = await loadConfig<unknown>({
+    const result = await loadConfig({
       cwd,
       name: NANNY_CONFIG_NAME,
       packageJson: NANNY_CONFIG_NAME,
