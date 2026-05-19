@@ -3,13 +3,13 @@
   "description": "Repo management and maintenance CLI for davidsneighbour projects.",
   "version": "0.1.4",
   "dependencies": {
-    "@davidsneighbour/release-config": "2026.0.2",
+    "@davidsneighbour/release-config": "2026.0.5",
     "fast-glob": "3.3.3",
     "jsonc-parser": "3.3.1"
   },
   "devDependencies": {
-    "@types/node": "25.3.0",
-    "typescript": "5.9.3"
+    "@types/node": "25.9.0",
+    "typescript": "6.0.3"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
