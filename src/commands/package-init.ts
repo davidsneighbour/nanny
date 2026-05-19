@@ -18,7 +18,7 @@ const DEFAULT_FRAGMENT_PATH = "system/default.jsonc";
 const EXTRACTED_KEYS = ["scripts", "dependencies", "devDependencies"] as const;
 
 export async function runPackageInit(opts: { cwd: string; verbose: boolean; argv: string[] }): Promise<void> {
-  const parsed = parseArgs(opts.argv, opts.cwd, opts.verbose);
+  const parsed = await parseArgs(opts.argv, opts.cwd, opts.verbose);
   const sourcePackage = readJsonObject(parsed.packagePath);
 
   const starterPackage = pickExtractedFields(sourcePackage);
@@ -60,7 +60,7 @@ function printHelp(): void {
       "",
       "Options:",
       "  --package <path>       Path to package.json (default: <cwd>/package.json)",
-      "  --packages-dir <path>  Package fragments directory (default: NANNY_PACKAGES_DIR or src/packages)",
+      "  --packages-dir <path>  Package fragments directory (default: config, NANNY_PACKAGES_DIR, or src/packages)",
       "  --force                Overwrite existing starter and default package fragments",
       "  --verbose              More logs",
       "  --help                 Show help for this command",
@@ -74,11 +74,13 @@ function printHelp(): void {
   );
 }
 
-function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Options {
+async function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Promise<Options> {
+  let packagesDirOverride: string | undefined;
+
   const options: Options = {
     force: false,
     packagePath: path.resolve(cwd, "package.json"),
-    packagesDir: resolvePackagesDir(cwd, undefined),
+    packagesDir: "",
     verbose: globalVerbose,
   };
 
@@ -103,7 +105,7 @@ function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Options
         if (typeof value !== "string" || value.length === 0) {
           throw new NannyError("Missing value for --packages-dir", 1);
         }
-        options.packagesDir = resolvePackagesDir(cwd, value);
+        packagesDirOverride = value;
         i += 1;
         break;
       }
@@ -118,6 +120,7 @@ function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Options
     }
   }
 
+  options.packagesDir = await resolvePackagesDir(cwd, packagesDirOverride);
   return options;
 }
 
