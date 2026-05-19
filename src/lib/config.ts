@@ -40,10 +40,6 @@ const DEFAULT_NANNY_CONFIG: NannyConfig = {
  * @param options - Loader options, including the working directory and optional package directory override.
  * @returns The loaded and validated Nanny configuration.
  * @throws NannyError when configuration loading or validation fails.
- *
- * @example
- * const loaded = await loadNannyConfig({ cwd: process.cwd() });
- * console.log(loaded.config.packagesDir);
  */
 export async function loadNannyConfig(options: LoadNannyConfigOptions): Promise<LoadedNannyConfig> {
   const cwd = path.resolve(options.cwd);
@@ -56,7 +52,7 @@ export async function loadNannyConfig(options: LoadNannyConfigOptions): Promise<
       name: NANNY_CONFIG_NAME,
       packageJson: NANNY_CONFIG_NAME,
       defaults: DEFAULT_NANNY_CONFIG,
-      overrides,
+      ...(overrides ? { overrides } : {}),
     });
 
     return {
@@ -81,9 +77,6 @@ export async function loadNannyConfig(options: LoadNannyConfigOptions): Promise<
  * @param content - JSONC file contents.
  * @returns Parsed JSON object.
  * @throws NannyError when the content is invalid or the root value is not an object.
- *
- * @example
- * const value = parseJsoncObject("package-fragment.jsonc", "{ // comment\n  \"type\": \"module\"\n}");
  */
 export function parseJsoncObject(filePath: string, content: string): JsonObject {
   try {
