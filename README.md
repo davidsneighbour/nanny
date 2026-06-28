@@ -1,6 +1,16 @@
 # @davidsneighbour/nanny
 
-Repo management and maintenance CLI for davidsneighbour projects.
+Repo management and maintenance CLI for @davidsneighbour's projects.
+
+- [Installation](#installation)
+- [Global usage](#global-usage)
+- [Configuration](#configuration)
+- [Commands](#commands)
+  - [package-init](#package-init)
+  - [generate-package](#generate-package)
+  - [update-package](#update-package)
+  - [merge-vscode-config](#merge-vscode-config)
+- [Tests](#tests)
 
 ## Installation
 
