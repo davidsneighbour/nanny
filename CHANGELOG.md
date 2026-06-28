@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.4.1](https://github.com/davidsneighbour/nanny/compare/v0.4.0...v0.4.1) (2026-06-28)
+
+### Bug Fixes
+
+* **deps:** update release-it to 20.2.1 to patch undici CVEs ([4851b9e](https://github.com/davidsneighbour/nanny/commit/4851b9e4257f0f0fb843b58e5fe315a84a8eb26e)), closes [#27](https://github.com/davidsneighbour/nanny/issues/27)
+
+### Build
+
+* **fix:** remove .npmrc config ([a4139fe](https://github.com/davidsneighbour/nanny/commit/a4139fe800c7b4c7bf74c2d1aa35354ee3a81527))
+* **fix:** use @dnbhq/tsconfig for CLI tsconfig ([b452a92](https://github.com/davidsneighbour/nanny/commit/b452a923feadb381561336c6b3026612e151c67d))
+
+### Chores
+
+* add CLAUDE.md with codebase guidance for Claude Code ([7041fa8](https://github.com/davidsneighbour/nanny/commit/7041fa83afb92ccf9c5544613e0970a96de82ec2))
+* add scratch/ to .gitignore ([dcbac3c](https://github.com/davidsneighbour/nanny/commit/dcbac3cb43465c908b016ac47064538096ecd2af))
+* **deps:** update dependency node to v24 ([#7](https://github.com/davidsneighbour/nanny/issues/7)) ([01a6272](https://github.com/davidsneighbour/nanny/commit/01a62722c91c51674736939f620852dc6027aa56))
+
+### Documentation
+
+* expand README with ToC, configuration, and all commands ([8dcc93f](https://github.com/davidsneighbour/nanny/commit/8dcc93fa412051c00f86292794d799f233e67bc4))
+
 ## [0.4.0](https://github.com/davidsneighbour/nanny/compare/v0.3.0...v0.4.0) (2026-05-19)
 
 ### Features
