@@ -29,9 +29,9 @@ export function stripGlobalFlags(argv: readonly string[]): string[] {
       continue;
     }
     if (a === "--verbose") continue;
-    if (a === "--help" || a === "-h") continue;
 
-    out.push(a);
+    // Normalize the short flag so every command's own --help handling sees it.
+    out.push(a === "-h" ? "--help" : a);
   }
 
   return out;
