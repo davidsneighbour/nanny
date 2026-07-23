@@ -2,3 +2,4 @@ node_modules/
 dist/
 .wireit/
 scratch/
+nanny.config.local.jsonc

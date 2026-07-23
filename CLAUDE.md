@@ -41,8 +41,9 @@ There is **no third-party CLI framework** — flag parsing is entirely manual vi
 `packagesDir` resolves in this order:
 1. `--packages-dir` CLI flag
 2. `NANNY_PACKAGES_DIR` env var
-3. c12-loaded config file (e.g. `nanny.config.jsonc`, `.nannyrc`, `package.json#nanny`)
-4. Default: `src/packages`
+3. `nanny.config.local.jsonc` in the cwd (gitignored, per-machine override)
+4. c12-loaded config file (e.g. `nanny.config.jsonc`, `.nannyrc`, `package.json#nanny`) — repo-local, committed
+5. Default: `src/packages`
 
 ### Package fragment commands
 

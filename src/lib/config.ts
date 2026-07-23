@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 
 import { loadConfig } from "c12";
@@ -8,6 +9,7 @@ import { NannyError } from "./errors.js";
 export const NANNY_CONFIG_NAME = "nanny";
 export const DEFAULT_PACKAGES_DIR = "src/packages";
 export const PACKAGES_DIR_ENV_VAR = "NANNY_PACKAGES_DIR";
+export const LOCAL_CONFIG_FILENAME = "nanny.config.local.jsonc";
 
 type JsonObject = Record<string, unknown>;
 
@@ -18,6 +20,7 @@ export type NannyConfig = {
 export type LoadedNannyConfig = {
   config: NannyConfig;
   configFile: string | null;
+  localConfigFile: string | null;
   cwd: string;
 };
 
@@ -31,11 +34,14 @@ const DEFAULT_NANNY_CONFIG: NannyConfig = {
 };
 
 /**
- * Loads Nanny configuration from c12-supported config locations.
+ * Loads Nanny configuration, layering repo-local and local overrides.
  *
  * Configuration may be provided through `nanny.config.*`, `.nannyrc.*`,
- * `.config/nanny.*`, or the `nanny` property in `package.json`.
- * CLI and environment overrides have higher precedence than config files.
+ * `.config/nanny.*`, or the `nanny` property in `package.json` (all
+ * repo-local, meant to be committed). A gitignored `nanny.config.local.jsonc`
+ * in the working directory, if present, overrides those values for
+ * per-machine settings that shouldn't be committed. CLI and environment
+ * overrides have the highest precedence.
  *
  * @param options - Loader options, including the working directory and optional package directory override.
  * @returns The loaded and validated Nanny configuration.
@@ -44,7 +50,6 @@ const DEFAULT_NANNY_CONFIG: NannyConfig = {
 export async function loadNannyConfig(options: LoadNannyConfigOptions): Promise<LoadedNannyConfig> {
   const cwd = path.resolve(options.cwd);
   const packagesDirOverride = getPackagesDirOverride(options.packagesDirOverride);
-  const overrides = packagesDirOverride ? { packagesDir: packagesDirOverride } : undefined;
 
   try {
     const result = await loadConfig({
@@ -52,12 +57,17 @@ export async function loadNannyConfig(options: LoadNannyConfigOptions): Promise<
       name: NANNY_CONFIG_NAME,
       packageJson: NANNY_CONFIG_NAME,
       defaults: DEFAULT_NANNY_CONFIG,
-      ...(overrides ? { overrides } : {}),
     });
 
+    const repoConfig = parseNannyConfig(result.config);
+    const local = readLocalConfigOverride(cwd);
+
+    const packagesDir = packagesDirOverride ?? local?.packagesDir ?? repoConfig.packagesDir;
+
     return {
-      config: parseNannyConfig(result.config),
+      config: { packagesDir },
       configFile: typeof result.configFile === "string" ? result.configFile : null,
+      localConfigFile: local ? path.resolve(cwd, LOCAL_CONFIG_FILENAME) : null,
       cwd,
     };
   } catch (error: unknown) {
@@ -95,6 +105,29 @@ export function parseJsoncObject(filePath: string, content: string): JsonObject 
     const message = error instanceof Error ? error.message : String(error);
     throw new NannyError(`Failed to parse JSONC file ${filePath}: ${message}`, 1);
   }
+}
+
+/**
+ * Reads `nanny.config.local.jsonc` from `cwd`, if present.
+ *
+ * This file is meant to be gitignored and holds per-machine overrides that
+ * take precedence over repo-local config but not over CLI flags or env vars.
+ */
+function readLocalConfigOverride(cwd: string): Partial<NannyConfig> | undefined {
+  const localPath = path.resolve(cwd, LOCAL_CONFIG_FILENAME);
+  if (!fs.existsSync(localPath)) {
+    return undefined;
+  }
+
+  const content = fs.readFileSync(localPath, "utf8");
+  const parsed = parseJsoncObject(localPath, content);
+
+  const packagesDir = parsed["packagesDir"];
+  if (typeof packagesDir !== "string" || packagesDir.trim().length === 0) {
+    return undefined;
+  }
+
+  return { packagesDir: packagesDir.trim() };
 }
 
 function getPackagesDirOverride(cliOverride: string | undefined): string | undefined {

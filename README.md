@@ -34,7 +34,8 @@ Package fragment commands read their fragment directory from this precedence ord
 
 * `--packages-dir <path>`
 * `NANNY_PACKAGES_DIR`
-* Nanny configuration loaded through `c12`
+* `nanny.config.local.jsonc` in the working directory (gitignored, per-machine override)
+* Nanny configuration loaded through `c12` (repo-local, committed)
 * `src/packages`
 
 ## Configuration
@@ -87,6 +88,17 @@ Example `package.json` configuration:
   "nanny": {
     "packagesDir": "config/package-particles"
   }
+}
+```
+
+### Local overrides
+
+A gitignored `nanny.config.local.jsonc` in the working directory overrides the repo-local config above, for per-machine settings that shouldn't be committed. It's applied after the `c12`-loaded config and before CLI flags / env vars.
+
+```jsonc
+// nanny.config.local.jsonc (gitignored)
+{
+  "packagesDir": "/tmp/my-local-package-particles"
 }
 ```
 
