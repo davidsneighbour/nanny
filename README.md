@@ -22,9 +22,12 @@ npm install -D @davidsneighbour/nanny
 
 ```bash
 nanny <command> [--cwd <path>] [--verbose]
+nanny --version
 ```
 
 Commands run relative to `--cwd` (defaults to the current working directory).
+
+Run `nanny --version` (or `-v`) to print the installed version.
 
 Package fragment commands read their fragment directory from this precedence order:
 

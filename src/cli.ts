@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /* eslint-disable no-console */
 
+import { createRequire } from "node:module";
 import { exit } from "node:process";
 
 import { formatError, NannyError } from "./lib/errors.js";
@@ -9,6 +10,13 @@ import { runGeneratePackage } from "./commands/generate-package.js";
 import { runUpdatePackage } from "./commands/update-package.js";
 import { runPackageInit } from "./commands/package-init.js";
 import { runMergeVscodeConfig } from "./commands/merge-vscode-config.js";
+
+const require = createRequire(import.meta.url);
+
+function getVersion(): string {
+  const pkg = require("../package.json") as { version: string };
+  return pkg.version;
+}
 
 function printHelp(): void {
   console.log(
@@ -28,6 +36,7 @@ function printHelp(): void {
       "  --cwd <path>          Working directory (default: current working directory)",
       "  --verbose             More logs",
       "  --help                Show help",
+      "  --version             Show version number",
       "",
       "Command help:",
       "  nanny package-init --help",
@@ -45,6 +54,11 @@ async function main(): Promise<void> {
 
   if (cmd === "--help" || cmd === "-h") {
     printHelp();
+    return;
+  }
+
+  if (cmd === "--version" || cmd === "-v") {
+    console.log(getVersion());
     return;
   }
 
