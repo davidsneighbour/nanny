@@ -1,5 +1,11 @@
 {
   "extends": "@dnbhq/tsconfig/cli",
+  "compilerOptions": {
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
+    "outDir": "dist",
+    "rootDir": "src"
+  },
   "include": [
     "src/**/*.ts"
   ],
