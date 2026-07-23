@@ -204,7 +204,7 @@ function printHelp(): void {
       "  nanny check [options]",
       "",
       "Options:",
-      "  --packages-dir <path>  Package fragments directory (default: config, NANNY_PACKAGES_DIR, or src/packages)",
+      "  --packages-dir <path>  Package fragments directory (default: repo/local config, NANNY_PACKAGES_DIR, or src/packages)",
       "  --verbose              More logs",
       "  --help                 Show help for this command",
       "",

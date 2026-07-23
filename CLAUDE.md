@@ -51,7 +51,7 @@ There is **no third-party CLI framework** — flag parsing is entirely manual vi
 
 - `legacy/starter.jsonc` — holds `scripts`, `dependencies`, `devDependencies`
 - `system/default.jsonc` — holds all other `package.json` metadata fields
-- Additional `*/*.jsonc` files can be added; `generate-package` deep-merges them all
+- Additional `**/*.jsonc` files can be added; `generate-package` deep-merges them all and `update-package` audits them all
 
 The `generate-package` merge preserves a fixed set of keys from the root `package.json` (name, version, author, repository, etc.) and removes any `notes` key from the merged output.
 

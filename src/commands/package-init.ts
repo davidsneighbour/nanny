@@ -19,6 +19,11 @@ const EXTRACTED_KEYS = ["scripts", "dependencies", "devDependencies"] as const;
 
 export async function runPackageInit(opts: { cwd: string; verbose: boolean; argv: string[] }): Promise<void> {
   const parsed = await parseArgs(opts.argv, opts.cwd, opts.verbose);
+
+  if (!fs.existsSync(parsed.packagePath)) {
+    throw new NannyError(`package.json not found at ${parsed.packagePath}`, 2);
+  }
+
   const sourcePackage = readJsonObject(parsed.packagePath);
 
   const starterPackage = pickExtractedFields(sourcePackage);
@@ -60,7 +65,7 @@ function printHelp(): void {
       "",
       "Options:",
       "  --package <path>       Path to package.json (default: <cwd>/package.json)",
-      "  --packages-dir <path>  Package fragments directory (default: config, NANNY_PACKAGES_DIR, or src/packages)",
+      "  --packages-dir <path>  Package fragments directory (default: repo/local config, NANNY_PACKAGES_DIR, or src/packages)",
       "  --force                Overwrite existing starter and default package fragments",
       "  --verbose              More logs",
       "  --help                 Show help for this command",
@@ -69,6 +74,12 @@ function printHelp(): void {
       "  1) Writes scripts, dependencies, and devDependencies to <packages-dir>/legacy/starter.jsonc",
       "  2) Writes all other package.json fields to <packages-dir>/system/default.jsonc",
       "  3) Leaves package.json unchanged so generate-package can be tested with --dry-run",
+      "  Refuses to overwrite existing fragment files unless --force is given.",
+      "",
+      "Examples:",
+      "  nanny package-init",
+      "  nanny package-init --packages-dir config/package-particles",
+      "  nanny package-init --force",
       "",
     ].join("\n"),
   );

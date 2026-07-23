@@ -95,7 +95,7 @@ async function main(): Promise<void> {
       default:
         console.error(`Unknown command: ${cmd}`);
         printHelp();
-        exit(2);
+        exit(1);
     }
   } catch (err: unknown) {
     const exitCode = err instanceof NannyError ? err.exitCode : 1;

@@ -142,7 +142,7 @@ function printHelp(): void {
       "  --out <path>      Output path (default: .editorconfig)",
       "  --dry-run         Print the result to stdout, do not write file",
       "  --verbose         More logs",
-      "  --help            Show help",
+      "  --help            Show help for this command",
       "",
       "What it does:",
       "  Writes .editorconfig with davidsneighbour's sensible defaults if none exists.",

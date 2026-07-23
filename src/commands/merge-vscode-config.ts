@@ -124,7 +124,7 @@ function printHelp(): void {
       "  --dry-run         Print merged JSON to stdout, do not write file",
       "  --check           Exit non-zero if output is missing or out of date",
       "  --verbose         More logs",
-      "  --help            Show help",
+      "  --help            Show help for this command",
       "",
       "Examples:",
       "  nanny merge-vscode-config --verbose",

@@ -156,7 +156,7 @@ nanny generate-package --add-keys workspaces --dry-run
 
 ### update-package
 
-Synchronises dependency versions in `<packages-dir>/*/*.jsonc` against the root `package.json`, then audits:
+Synchronises dependency versions in `<packages-dir>/**/*.jsonc` against the root `package.json`, then audits:
 
 * unused root dependencies
 * scripts missing from package jsonc files

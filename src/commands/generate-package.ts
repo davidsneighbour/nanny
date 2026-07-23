@@ -32,6 +32,10 @@ export async function runGeneratePackage(opts: { cwd: string; verbose: boolean; 
     console.error(`> Reading package fragments from ${parsed.packagesDir}`);
   }
 
+  if (!fs.existsSync(parsed.pkgPath)) {
+    throw new NannyError(`package.json not found at ${parsed.pkgPath}`, 2);
+  }
+
   const pkg = readJsonc(parsed.pkgPath);
   const filteredPkg = filterPackageJson(pkg, parsed.keysToPreserve);
 
@@ -66,7 +70,7 @@ function printHelp(): void {
       "",
       "Options:",
       "  --package <path>       Path to package.json (default: <cwd>/package.json)",
-      "  --packages-dir <path>  Package fragments directory (default: config, NANNY_PACKAGES_DIR, or src/packages)",
+      "  --packages-dir <path>  Package fragments directory (default: repo/local config, NANNY_PACKAGES_DIR, or src/packages)",
       "  --keys <list>          Comma-separated list of keys to preserve from package.json (replaces the default list)",
       "  --add-keys <list>      Comma-separated list of keys to add to the preserve list (extends --keys or the default)",
       "  --dry-run              Print merged JSON to stdout, do not write file",
