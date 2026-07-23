@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.5.0](https://github.com/davidsneighbour/nanny/compare/v0.4.1...v0.5.0) (2026-07-23)
+
+### Features
+
+* **check:** add read-only nanny check command ([ad0bf88](https://github.com/davidsneighbour/nanny/commit/ad0bf882481120a511faf6dc9462f87cec4a8ed6)), closes [#15](https://github.com/davidsneighbour/nanny/issues/15)
+* **ci:** add commitlint with husky hook and CI enforcement ([2ff88d7](https://github.com/davidsneighbour/nanny/commit/2ff88d77ecdf8ad382150e3840a153d1bf595636)), closes [#12](https://github.com/davidsneighbour/nanny/issues/12)
+* **cli:** add --version flag ([1ec8e8c](https://github.com/davidsneighbour/nanny/commit/1ec8e8c4eb4b421a9fef7ef2268f4f2d76e01dc5)), closes [#22](https://github.com/davidsneighbour/nanny/issues/22)
+* **config:** support gitignored nanny.config.local.jsonc overrides ([922a2ad](https://github.com/davidsneighbour/nanny/commit/922a2ada582fc37dc4a036d52814a04261f2ae23)), closes [#11](https://github.com/davidsneighbour/nanny/issues/11)
+* **editorconfig:** add nanny editorconfig command ([b8a9078](https://github.com/davidsneighbour/nanny/commit/b8a907812fdfbe1fce8d145859cd3ceb9a6dedb6)), closes [#14](https://github.com/davidsneighbour/nanny/issues/14)
+* **generate-package:** add --add-keys to extend the preserve list ([072b7c1](https://github.com/davidsneighbour/nanny/commit/072b7c18d677fcdb0d75579369f893e19d706c0c)), closes [#23](https://github.com/davidsneighbour/nanny/issues/23)
+
+### Bug Fixes
+
+* **build:** restore outDir/rootDir so npm run build actually emits ([27b8e8e](https://github.com/davidsneighbour/nanny/commit/27b8e8e68c3bfe169829abcf0baa116d924f2e31)), closes [#32](https://github.com/davidsneighbour/nanny/issues/32)
+* **ci:** correct dependabot label and remove dead gomod ecosystem ([e95a10d](https://github.com/davidsneighbour/nanny/commit/e95a10db603bd2b49ca11678cb7dd7db0759ff05)), closes [#21](https://github.com/davidsneighbour/nanny/issues/21) [#25](https://github.com/davidsneighbour/nanny/issues/25)
+* **ci:** run integration test in CI workflow ([9c37f05](https://github.com/davidsneighbour/nanny/commit/9c37f05f7cbcd1dc740931140a9ec26aa6023644)), closes [#20](https://github.com/davidsneighbour/nanny/issues/20)
+* **ci:** update dependabot label to match new type: taxonomy ([45429a3](https://github.com/davidsneighbour/nanny/commit/45429a34f62fbd9760e41608b9bb84b353a096d3)), closes [#21](https://github.com/davidsneighbour/nanny/issues/21)
+* **cli:** audit CLI interface for exit codes, help text, and error clarity ([11f352e](https://github.com/davidsneighbour/nanny/commit/11f352efee35977cdb5428a9f3bafca65436fcc1)), closes [pre-#18](https://github.com/davidsneighbour/pre-/issues/18) [#11](https://github.com/davidsneighbour/nanny/issues/11) [#8](https://github.com/davidsneighbour/nanny/issues/8)
+* **cli:** stop swallowing per-command --help/-h in stripGlobalFlags ([8c1e5ed](https://github.com/davidsneighbour/nanny/commit/8c1e5edde5e2f0241556b673879e8012fc08256b)), closes [#33](https://github.com/davidsneighbour/nanny/issues/33)
+* **deps:** move release tooling to devDependencies ([fa49abc](https://github.com/davidsneighbour/nanny/commit/fa49abc03cbb7c64831c0cbd1a4c993b984fb12c)), closes [#17](https://github.com/davidsneighbour/nanny/issues/17)
+* **merge-vscode-config:** remove undocumented .env loading side effect ([4bd7a2f](https://github.com/davidsneighbour/nanny/commit/4bd7a2feb890ec1ba8b137d36d62cb7e8cb78e06)), closes [#24](https://github.com/davidsneighbour/nanny/issues/24)
+* **update-package:** scan fragments recursively to match generate-package ([65ac7fd](https://github.com/davidsneighbour/nanny/commit/65ac7fdb5e5a4205c05abf8c86cd39f1421044a1)), closes [#18](https://github.com/davidsneighbour/nanny/issues/18)
+
+### Build
+
+* **deps:** bump actions/checkout from 6.0.2 to 7.0.0 ([#28](https://github.com/davidsneighbour/nanny/issues/28)) ([45fd259](https://github.com/davidsneighbour/nanny/commit/45fd259503495f1d2e52b8f763068a5c834b259a))
+* **deps:** update dependencies ([bd7069d](https://github.com/davidsneighbour/nanny/commit/bd7069dc1081cfb104620b9ca6074534ed93d74f))
+
+### Chores
+
+* **project:** update project plan ([ad5f297](https://github.com/davidsneighbour/nanny/commit/ad5f2971678f5c7fc7de825c2c600cba055fd384)), closes [#26](https://github.com/davidsneighbour/nanny/issues/26) [#9](https://github.com/davidsneighbour/nanny/issues/9) [#24](https://github.com/davidsneighbour/nanny/issues/24) [#16](https://github.com/davidsneighbour/nanny/issues/16) [#11](https://github.com/davidsneighbour/nanny/issues/11)
+
+### CI
+
+* **release:** switch npm publish to trusted publishing via OIDC ([ca7c05d](https://github.com/davidsneighbour/nanny/commit/ca7c05d2f18974d30a7f8a31a11cb912ccd8774e)), closes [#13](https://github.com/davidsneighbour/nanny/issues/13)
+
+### Refactoring
+
+* **ci:** migrate commit-msg hook from husky to simple-git-hooks ([7e41884](https://github.com/davidsneighbour/nanny/commit/7e41884917198c343281d011f0388fd1b5554b1c))
+
 ## [0.4.1](https://github.com/davidsneighbour/nanny/compare/v0.4.0...v0.4.1) (2026-06-28)
 
 ### Bug Fixes
