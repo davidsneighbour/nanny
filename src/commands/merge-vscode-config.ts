@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { parseJSONC } from "confbox";
@@ -28,8 +27,6 @@ export async function runMergeVscodeConfig(opts: { cwd: string; verbose: boolean
   const basePath = resolvePathFromCwd(options.base, opts.cwd);
   const localPath = resolvePathFromCwd(options.local, opts.cwd);
   const outPath = resolvePathFromCwd(options.out, opts.cwd);
-
-  loadDotEnvIfPresent(options.verbose, opts.cwd);
 
   if (!fs.existsSync(basePath)) {
     throw new NannyError(`Base file not found: ${basePath}`, 2);
@@ -181,41 +178,4 @@ function isPlainObject(v: unknown): v is JsonObject {
 
 function resolvePathFromCwd(p: string, cwd: string): string {
   return path.isAbsolute(p) ? p : path.resolve(cwd, p);
-}
-
-/**
- * Minimal .env loader (KEY=VALUE).
- * Loads .env from cwd first, then from ${HOME}/.env.
- * Does not overwrite existing process.env keys.
- */
-function loadDotEnvIfPresent(verbose: boolean, cwd: string): void {
-  const candidates = [path.resolve(cwd, ".env"), path.resolve(os.homedir(), ".env")];
-
-  for (const file of candidates) {
-    if (!fs.existsSync(file)) continue;
-
-    const content = fs.readFileSync(file, "utf8");
-    const lines = content.split(/\r?\n/);
-
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed || trimmed.startsWith("#")) continue;
-
-      const eq = trimmed.indexOf("=");
-      if (eq === -1) continue;
-
-      const key = trimmed.slice(0, eq).trim();
-      let val = trimmed.slice(eq + 1).trim();
-      if (!key) continue;
-      if (Object.prototype.hasOwnProperty.call(process.env, key)) continue;
-
-      if ((val.startsWith("\"") && val.endsWith("\"")) || (val.startsWith("'") && val.endsWith("'"))) {
-        val = val.slice(1, -1);
-      }
-
-      process.env[key] = val;
-    }
-
-    if (verbose) console.log(`[nanny merge-vscode-config] Loaded env from: ${file}`);
-  }
 }
