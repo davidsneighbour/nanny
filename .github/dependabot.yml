@@ -17,7 +17,7 @@ updates:
     pull-request-branch-name:
       separator: /
     labels:
-      - dependencies
+      - type:dependencies
     ignore:
       # do not update @davidsneighbour packages, that is done via renovate
       - dependency-name: "@davidsneighbour/*"
@@ -42,7 +42,7 @@ updates:
     pull-request-branch-name:
       separator: /
     labels:
-      - dependencies
+      - type:dependencies
     cooldown:
       default-days: 7
       # include:
