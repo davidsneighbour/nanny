@@ -17,32 +17,10 @@ updates:
     pull-request-branch-name:
       separator: /
     labels:
-      - type:dependencies
+      - dependencies
     ignore:
       # do not update @davidsneighbour packages, that is done via renovate
       - dependency-name: "@davidsneighbour/*"
-    cooldown:
-      default-days: 7
-      # include:
-      #   - "requests"
-      exclude:
-        - "@davidsneighbour/*"
-
-  - package-ecosystem: gomod
-    directory: /
-    schedule:
-      interval: monthly
-      day: friday
-      time: "22:00"
-      timezone: Asia/Bangkok
-    assignees:
-      - davidsneighbour
-    target-branch: main
-    open-pull-requests-limit: 999
-    pull-request-branch-name:
-      separator: /
-    labels:
-      - type:dependencies
     cooldown:
       default-days: 7
       # include:
@@ -64,7 +42,7 @@ updates:
     pull-request-branch-name:
       separator: /
     labels:
-      - type:dependencies
+      - dependencies
     cooldown:
       default-days: 7
       # include:
