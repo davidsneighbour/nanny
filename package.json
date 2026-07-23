@@ -17,14 +17,14 @@
     "@dnbhq/tsconfig": "0.1.6",
     "@release-it/conventional-changelog": "11.0.1",
     "@types/node": "26.1.1",
-    "husky": "9.1.7",
     "release-it": "20.2.1",
+    "simple-git-hooks": "2.13.1",
     "typescript": "7.0.2"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "ci": "npm run typecheck && npm run build",
-    "prepare": "husky",
+    "prepare": "simple-git-hooks",
     "prepublishOnly": "npm run build",
     "release": "npm run ci && release-it",
     "test:package-init": "npm run build && node dist/tests/package-init.test.js",
@@ -44,5 +44,8 @@
   "engines": {
     "node": ">=24"
   },
-  "type": "module"
+  "type": "module",
+  "simple-git-hooks": {
+    "commit-msg": "npx --no -- commitlint --edit $1"
+  }
 }
