@@ -40,7 +40,7 @@ export async function runUpdatePackage(opts: { cwd: string; verbose: boolean; ar
   }
 
   const rootPkg = loadJson<PackageJson>(rootPkgAbs);
-  const packageJsoncGlob = createPackageGlob(opts.cwd, options.packagesDir, "*/*.jsonc");
+  const packageJsoncGlob = createPackageGlob(opts.cwd, options.packagesDir, "**/*.jsonc");
   const packageDisplayPath = toPosixRelative(opts.cwd, options.packagesDir);
   const jsoncFiles = await glob(packageJsoncGlob, { dot: false, cwd: opts.cwd, absolute: false });
 
