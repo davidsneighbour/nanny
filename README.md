@@ -11,6 +11,7 @@ Repo management and maintenance CLI for @davidsneighbour's projects.
   - [update-package](#update-package)
   - [merge-vscode-config](#merge-vscode-config)
   - [check](#check)
+  - [editorconfig](#editorconfig)
 - [Tests](#tests)
 
 ## Installation
@@ -201,6 +202,21 @@ Examples:
 ```bash
 nanny check
 nanny check --packages-dir config/package-particles
+```
+
+### editorconfig
+
+Writes `.editorconfig` with davidsneighbour's sensible defaults if none exists. If a file already exists, its nanny-managed sections (`[*]`, `[*.md]`, `[*.{yml,yaml}]`, `[*.{json,jsonc}]`) are refreshed to the current defaults; any other section is preserved as-is.
+
+```bash
+nanny editorconfig [--out <path>] [--dry-run] [--verbose]
+```
+
+Examples:
+
+```bash
+nanny editorconfig
+nanny editorconfig --dry-run
 ```
 
 ## Tests
