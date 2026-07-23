@@ -8,7 +8,7 @@ import { createPackageGlob, resolvePackagesDir, toPosixRelative } from "../lib/p
 
 type JsonObject = Record<string, unknown>;
 
-type PackageJson = {
+export type PackageJson = {
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
   scripts?: Record<string, string>;
@@ -205,12 +205,12 @@ async function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): P
   return o;
 }
 
-function loadJsonc<T = unknown>(filePath: string): T {
+export function loadJsonc<T = unknown>(filePath: string): T {
   const content = fs.readFileSync(filePath, "utf8");
   return parseJsoncObject(filePath, content) as T;
 }
 
-function loadJson<T = unknown>(filePath: string): T {
+export function loadJson<T = unknown>(filePath: string): T {
   const content = fs.readFileSync(filePath, "utf8");
   return JSON.parse(content) as T;
 }
@@ -232,7 +232,27 @@ function replaceVersions(target: PackageJson, source: PackageJson): boolean {
   return updated;
 }
 
-function collectUsedDeps(files: string[]): Set<string> {
+/** Read-only diff of dependency versions in `target` that differ from `source`. */
+export function computeVersionDrift(
+  target: PackageJson,
+  source: PackageJson,
+): Array<{ name: string; from: string; to: string }> {
+  const drift: Array<{ name: string; from: string; to: string }> = [];
+  for (const section of ["dependencies", "devDependencies"] as const) {
+    const t = target[section];
+    const s = source[section];
+    if (!t || !s) continue;
+    for (const dep of Object.keys(t)) {
+      const newVersion = s[dep];
+      if (newVersion && t[dep] !== newVersion) {
+        drift.push({ name: dep, from: String(t[dep]), to: newVersion });
+      }
+    }
+  }
+  return drift;
+}
+
+export function collectUsedDeps(files: string[]): Set<string> {
   const used = new Set<string>();
   for (const file of files) {
     const json = loadJsonc<PackageJson>(file);
@@ -246,7 +266,7 @@ function collectUsedDeps(files: string[]): Set<string> {
   return used;
 }
 
-function collectScriptsAndWireit(files: string[]) {
+export function collectScriptsAndWireit(files: string[]) {
   const perFileScripts: Array<{ file: string; scripts: Record<string, string> }> = [];
   const perFileWireit: Array<{ file: string; wireit: Record<string, unknown> }> = [];
 
@@ -268,7 +288,7 @@ function collectScriptsAndWireit(files: string[]) {
   return { perFileScripts, perFileWireit };
 }
 
-function findMissingFromPackages<T>(
+export function findMissingFromPackages<T>(
   rootMap: Record<string, T> | undefined,
   perFile: Array<{ file: string; map: Record<string, T> }>,
 ): string[] {
@@ -280,7 +300,7 @@ function findMissingFromPackages<T>(
   return Object.keys(rootMap).filter((k) => !present.has(k)).sort();
 }
 
-function findChangedScripts(
+export function findChangedScripts(
   rootScripts: Record<string, string> | undefined,
   perFileScripts: Array<{ file: string; scripts: Record<string, string> }>,
 ): Array<{ file: string; name: string; root: string; found: string }> {
@@ -311,7 +331,7 @@ function stableStringify(value: unknown): string {
   return JSON.stringify(value, uniq, 2);
 }
 
-function findChangedWireit(
+export function findChangedWireit(
   rootWireit: Record<string, unknown> | undefined,
   perFileWireit: Array<{ file: string; wireit: Record<string, unknown> }>,
 ): Array<{ file: string; name: string }> {
@@ -329,7 +349,7 @@ function findChangedWireit(
   return out.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function findDuplicateKeys<T>(
+export function findDuplicateKeys<T>(
   entries: Array<{ file: string; map: Record<string, T> }>,
 ): Array<{ name: string; files: string[] }> {
   const seen: Record<string, string[]> = {};

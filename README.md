@@ -10,6 +10,7 @@ Repo management and maintenance CLI for @davidsneighbour's projects.
   - [generate-package](#generate-package)
   - [update-package](#update-package)
   - [merge-vscode-config](#merge-vscode-config)
+  - [check](#check)
 - [Tests](#tests)
 
 ## Installation
@@ -167,6 +168,27 @@ Merges `.vscode/settings.base.jsonc` and `.vscode/settings.local.jsonc` (optiona
 
 ```bash
 nanny merge-vscode-config [--base <path>] [--local <path>] [--out <path>] [--check] [--dry-run] [--verbose]
+```
+
+### check
+
+Read-only report of repo maintenance tasks. Makes no changes; exits non-zero only if actionable issues are found.
+
+```bash
+nanny check [--packages-dir <path>] [--verbose]
+```
+
+Checks:
+
+* Package fragment dependency versions, scripts, and wireit config are in sync with `package.json` (skipped if no fragments are found)
+* `.vscode/settings.json` is in sync with `.vscode/settings.base.jsonc` (skipped if no base file is found)
+* No uncommitted changes in generated files (`package.json`, `.vscode/settings.json`) — skipped outside a git repository
+
+Examples:
+
+```bash
+nanny check
+nanny check --packages-dir config/package-particles
 ```
 
 ## Tests

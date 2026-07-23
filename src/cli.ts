@@ -10,6 +10,7 @@ import { runGeneratePackage } from "./commands/generate-package.js";
 import { runUpdatePackage } from "./commands/update-package.js";
 import { runPackageInit } from "./commands/package-init.js";
 import { runMergeVscodeConfig } from "./commands/merge-vscode-config.js";
+import { runCheck } from "./commands/check.js";
 
 const require = createRequire(import.meta.url);
 
@@ -31,6 +32,7 @@ function printHelp(): void {
       "  generate-package      Merge src/packages/**/*.jsonc into package.json",
       "  update-package        Sync dependency versions and audit scripts/wireit",
       "  merge-vscode-config   Merge VS Code settings.base.jsonc + settings.local.jsonc",
+      "  check                 Read-only report of repo maintenance tasks (non-zero exit if issues found)",
       "",
       "Global options:",
       "  --cwd <path>          Working directory (default: current working directory)",
@@ -43,6 +45,7 @@ function printHelp(): void {
       "  nanny merge-vscode-config --help",
       "  nanny generate-package --help",
       "  nanny update-package --help",
+      "  nanny check --help",
       "",
     ].join("\n"),
   );
@@ -79,6 +82,9 @@ async function main(): Promise<void> {
         return;
       case "merge-vscode-config":
         await runMergeVscodeConfig({ cwd, verbose, argv: rest });
+        return;
+      case "check":
+        await runCheck({ cwd, verbose, argv: rest });
         return;
       default:
         console.error(`Unknown command: ${cmd}`);
