@@ -126,8 +126,10 @@ NANNY_PACKAGES_DIR=config/package-particles nanny package-init
 Merges all `<packages-dir>/**/*.jsonc` into `package.json`, while preserving a configurable set of keys from the original `package.json`.
 
 ```bash
-nanny generate-package [--package <path>] [--packages-dir <path>] [--keys <csv>] [--dry-run] [--verbose]
+nanny generate-package [--package <path>] [--packages-dir <path>] [--keys <csv>] [--add-keys <csv>] [--dry-run] [--verbose]
 ```
+
+`--keys` replaces the default list of keys preserved from `package.json`. `--add-keys` extends whatever list is in effect (the default, or `--keys` if also passed) instead of replacing it.
 
 Examples:
 
@@ -135,6 +137,7 @@ Examples:
 nanny generate-package --dry-run
 nanny generate-package --packages-dir config/package-particles --dry-run
 NANNY_PACKAGES_DIR=config/package-particles nanny generate-package --dry-run
+nanny generate-package --add-keys workspaces --dry-run
 ```
 
 ### update-package

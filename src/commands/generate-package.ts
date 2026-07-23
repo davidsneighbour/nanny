@@ -67,7 +67,8 @@ function printHelp(): void {
       "Options:",
       "  --package <path>       Path to package.json (default: <cwd>/package.json)",
       "  --packages-dir <path>  Package fragments directory (default: config, NANNY_PACKAGES_DIR, or src/packages)",
-      "  --keys <list>          Comma-separated list of keys to preserve from package.json",
+      "  --keys <list>          Comma-separated list of keys to preserve from package.json (replaces the default list)",
+      "  --add-keys <list>      Comma-separated list of keys to add to the preserve list (extends --keys or the default)",
       "  --dry-run              Print merged JSON to stdout, do not write file",
       "  --verbose              More logs",
       "  --help                 Show help for this command",
@@ -77,6 +78,7 @@ function printHelp(): void {
       "  nanny generate-package --dry-run",
       "  nanny generate-package --packages-dir config/packages --dry-run",
       "  nanny generate-package --keys name,description,version",
+      "  nanny generate-package --add-keys workspaces",
       "",
     ].join("\n"),
   );
@@ -99,6 +101,7 @@ async function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): P
   ];
 
   let packagesDirOverride: string | undefined;
+  let addKeys: string[] = [];
 
   const o: Options = {
     dryRun: false,
@@ -142,9 +145,20 @@ async function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): P
         i++;
         break;
       }
+      case "--add-keys": {
+        const v = argv[i + 1];
+        if (!v) throw new NannyError("Missing value for --add-keys", 1);
+        addKeys = v.split(",").map((k) => k.trim()).filter(Boolean);
+        i++;
+        break;
+      }
       default:
         throw new NannyError(`Unknown argument: ${String(a)}`, 1);
     }
+  }
+
+  if (addKeys.length > 0) {
+    o.keysToPreserve = Array.from(new Set([...o.keysToPreserve, ...addKeys]));
   }
 
   o.packagesDir = await resolvePackagesDir(cwd, packagesDirOverride);
