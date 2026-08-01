@@ -20,7 +20,7 @@ Last synced: 2026-07-24
 - **[#18](https://github.com/davidsneighbour/nanny/issues/18) — `update-package` scans fragments one level deep (`*/*.jsonc`) while `generate-package` scans recursively (`**/*.jsonc`).** Confirmed in `src/commands/update-package.ts:43` vs `src/commands/generate-package.ts:22`. One-line glob alignment.
 - **[#19](https://github.com/davidsneighbour/nanny/issues/19) — `release-it` config is missing; the conventional-changelog plugin is never wired up.** Confirmed: no `release-it` key in `package.json`. Blocks correct changelog generation on every release going forward. Do before #13 and #12.
 
-## Fixes (enhancement-labeled but corrective)
+## Fixes (enhancement-labelled but corrective)
 
 - **[#25](https://github.com/davidsneighbour/nanny/issues/25) — Dead `gomod` ecosystem in `dependabot.yml`.** Confirmed still present. Bundle with #21.
 - **[#22](https://github.com/davidsneighbour/nanny/issues/22) — Add `--version` flag.** Confirmed `nanny --version` still falls through to "Unknown command" — no version handling in `src/cli.ts`. Standard CLI expectation, small change.

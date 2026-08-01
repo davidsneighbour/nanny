@@ -4,5 +4,14 @@
     "source.organizeImports.biome": "explicit"
   },
   "editor.formatOnSave": true,
-  "files.autoSave": "afterDelay"
+  "files.autoSave": "afterDelay",
+  "cSpell.language": "en-GB",
+  "cSpell.customDictionaries": {
+    "nanny-project-words": {
+      "name": "nanny-project-words",
+      "path": "${workspaceFolder}/.vscode/dictionary.txt",
+      "addWords": true,
+      "scope": "workspace"
+    }
+  }
 }

@@ -17,6 +17,7 @@
     "@dnbhq/tsconfig": "0.1.6",
     "@release-it/conventional-changelog": "11.0.1",
     "@types/node": "26.1.1",
+    "cspell": "10.0.1",
     "release-it": "20.2.1",
     "simple-git-hooks": "2.13.1",
     "typescript": "7.0.2"
@@ -27,6 +28,7 @@
     "prepare": "simple-git-hooks",
     "prepublishOnly": "npm run build",
     "release": "npm run ci && release-it",
+    "spellcheck": "cspell --no-progress .",
     "test:package-init": "npm run build && node dist/tests/package-init.test.js",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
@@ -47,5 +49,26 @@
   "type": "module",
   "simple-git-hooks": {
     "commit-msg": "npx --no -- commitlint --edit $1"
+  },
+  "cspell": {
+    "version": "0.2",
+    "language": "en-GB",
+    "dictionaryDefinitions": [
+      {
+        "name": "nanny-project-words",
+        "path": "./.vscode/dictionary.txt",
+        "addWords": true
+      }
+    ],
+    "dictionaries": [
+      "nanny-project-words"
+    ],
+    "ignorePaths": [
+      "node_modules",
+      "dist",
+      ".wireit",
+      "package-lock.json",
+      "CHANGELOG.md"
+    ]
   }
 }
