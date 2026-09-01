@@ -17,7 +17,7 @@
     "@dnbhq/tsconfig": "0.1.6",
     "@release-it/conventional-changelog": "11.0.1",
     "@types/node": "26.1.1",
-    "cspell": "10.0.1",
+    "cspell": "10.1.1",
     "release-it": "20.2.1",
     "simple-git-hooks": "2.13.1",
     "typescript": "7.0.2"
