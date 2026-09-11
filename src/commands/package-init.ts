@@ -2,7 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { NannyError } from "../lib/errors.js";
-import { resolvePackageFragmentPath, resolvePackagesDir, toPosixRelative } from "../lib/package-paths.js";
+import {
+  resolvePackageFragmentPath,
+  resolvePackagesDir,
+  toPosixRelative,
+} from "../lib/package-paths.js";
 
 type JsonObject = Record<string, unknown>;
 
@@ -17,7 +21,11 @@ const STARTER_FRAGMENT_PATH = "legacy/starter.jsonc";
 const DEFAULT_FRAGMENT_PATH = "system/default.jsonc";
 const EXTRACTED_KEYS = ["scripts", "dependencies", "devDependencies"] as const;
 
-export async function runPackageInit(opts: { cwd: string; verbose: boolean; argv: string[] }): Promise<void> {
+export async function runPackageInit(opts: {
+  cwd: string;
+  verbose: boolean;
+  argv: string[];
+}): Promise<void> {
   const parsed = await parseArgs(opts.argv, opts.cwd, opts.verbose);
 
   if (!fs.existsSync(parsed.packagePath)) {
@@ -29,8 +37,14 @@ export async function runPackageInit(opts: { cwd: string; verbose: boolean; argv
   const starterPackage = pickExtractedFields(sourcePackage);
   const defaultPackage = omitExtractedFields(sourcePackage);
 
-  const starterPath = resolvePackageFragmentPath(parsed.packagesDir, STARTER_FRAGMENT_PATH);
-  const defaultPath = resolvePackageFragmentPath(parsed.packagesDir, DEFAULT_FRAGMENT_PATH);
+  const starterPath = resolvePackageFragmentPath(
+    parsed.packagesDir,
+    STARTER_FRAGMENT_PATH,
+  );
+  const defaultPath = resolvePackageFragmentPath(
+    parsed.packagesDir,
+    DEFAULT_FRAGMENT_PATH,
+  );
   const starterDisplayPath = toPosixRelative(opts.cwd, starterPath);
   const defaultDisplayPath = toPosixRelative(opts.cwd, defaultPath);
 
@@ -85,7 +99,11 @@ function printHelp(): void {
   );
 }
 
-async function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Promise<Options> {
+async function parseArgs(
+  argv: string[],
+  cwd: string,
+  globalVerbose: boolean,
+): Promise<Options> {
   let packagesDirOverride: string | undefined;
 
   const options: Options = {
@@ -180,7 +198,10 @@ function omitExtractedFields(source: JsonObject): JsonObject {
 
 function ensureWritable(filePath: string, force: boolean): void {
   if (!force && fs.existsSync(filePath)) {
-    throw new NannyError(`Refusing to overwrite existing file: ${filePath}. Use --force to overwrite it.`, 1);
+    throw new NannyError(
+      `Refusing to overwrite existing file: ${filePath}. Use --force to overwrite it.`,
+      1,
+    );
   }
 }
 

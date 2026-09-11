@@ -14,19 +14,41 @@ try {
   const originalPackage = readJson(rootPackagePath);
   const fixturePackagePath = path.join(tempRoot, "package.json");
 
-  fs.writeFileSync(fixturePackagePath, `${JSON.stringify(originalPackage, null, 2)}\n`, "utf8");
+  fs.writeFileSync(
+    fixturePackagePath,
+    `${JSON.stringify(originalPackage, null, 2)}\n`,
+    "utf8",
+  );
 
-  execFileSync(process.execPath, [cliPath, "package-init", "--cwd", tempRoot, "--packages-dir", packagesDir], {
-    encoding: "utf8",
-    stdio: "pipe",
-  });
+  execFileSync(
+    process.execPath,
+    [cliPath, "package-init", "--cwd", tempRoot, "--packages-dir", packagesDir],
+    {
+      encoding: "utf8",
+      stdio: "pipe",
+    },
+  );
 
-  assert.equal(fs.existsSync(path.join(tempRoot, packagesDir, "legacy/starter.jsonc")), true);
-  assert.equal(fs.existsSync(path.join(tempRoot, packagesDir, "system/default.jsonc")), true);
+  assert.equal(
+    fs.existsSync(path.join(tempRoot, packagesDir, "legacy/starter.jsonc")),
+    true,
+  );
+  assert.equal(
+    fs.existsSync(path.join(tempRoot, packagesDir, "system/default.jsonc")),
+    true,
+  );
 
   const generatedPackageRaw = execFileSync(
     process.execPath,
-    [cliPath, "generate-package", "--cwd", tempRoot, "--packages-dir", packagesDir, "--dry-run"],
+    [
+      cliPath,
+      "generate-package",
+      "--cwd",
+      tempRoot,
+      "--packages-dir",
+      packagesDir,
+      "--dry-run",
+    ],
     {
       encoding: "utf8",
       stdio: "pipe",

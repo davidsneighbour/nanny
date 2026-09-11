@@ -4,8 +4,10 @@ dnbhq
 fixpack
 gomod
 kollitsch
+lintstaged
 nannyrc
 roundtrip
 scratchpad
+smol
 vars
 wireit

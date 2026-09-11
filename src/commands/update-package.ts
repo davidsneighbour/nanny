@@ -4,7 +4,11 @@ import glob from "fast-glob";
 
 import { parseJsoncObject } from "../lib/config.js";
 import { NannyError } from "../lib/errors.js";
-import { createPackageGlob, resolvePackagesDir, toPosixRelative } from "../lib/package-paths.js";
+import {
+  createPackageGlob,
+  resolvePackagesDir,
+  toPosixRelative,
+} from "../lib/package-paths.js";
 
 type JsonObject = Record<string, unknown>;
 
@@ -26,7 +30,11 @@ type Options = {
   packagesDir: string;
 };
 
-export async function runUpdatePackage(opts: { cwd: string; verbose: boolean; argv: string[] }): Promise<void> {
+export async function runUpdatePackage(opts: {
+  cwd: string;
+  verbose: boolean;
+  argv: string[];
+}): Promise<void> {
   const options = await parseArgs(opts.argv, opts.cwd, opts.verbose);
 
   if (options.help) {
@@ -40,9 +48,17 @@ export async function runUpdatePackage(opts: { cwd: string; verbose: boolean; ar
   }
 
   const rootPkg = loadJson<PackageJson>(rootPkgAbs);
-  const packageJsoncGlob = createPackageGlob(opts.cwd, options.packagesDir, "**/*.jsonc");
+  const packageJsoncGlob = createPackageGlob(
+    opts.cwd,
+    options.packagesDir,
+    "**/*.jsonc",
+  );
   const packageDisplayPath = toPosixRelative(opts.cwd, options.packagesDir);
-  const jsoncFiles = await glob(packageJsoncGlob, { dot: false, cwd: opts.cwd, absolute: false });
+  const jsoncFiles = await glob(packageJsoncGlob, {
+    dot: false,
+    cwd: opts.cwd,
+    absolute: false,
+  });
 
   for (const fileRel of jsoncFiles) {
     const file = path.resolve(opts.cwd, fileRel);
@@ -60,7 +76,9 @@ export async function runUpdatePackage(opts: { cwd: string; verbose: boolean; ar
     }
   }
 
-  const usedDeps = collectUsedDeps(jsoncFiles.map((f) => path.resolve(opts.cwd, f)));
+  const usedDeps = collectUsedDeps(
+    jsoncFiles.map((f) => path.resolve(opts.cwd, f)),
+  );
   const unusedDependencies: Array<{ name: string; version: string }> = [];
 
   for (const section of ["dependencies", "devDependencies"] as const) {
@@ -72,15 +90,21 @@ export async function runUpdatePackage(opts: { cwd: string; verbose: boolean; ar
   }
 
   if (unusedDependencies.length > 0) {
-    header(`Unused dependencies (in root, not in ${packageDisplayPath}/*.jsonc):`);
-    for (const { name, version } of unusedDependencies.sort((a, b) => a.name.localeCompare(b.name))) {
+    header(
+      `Unused dependencies (in root, not in ${packageDisplayPath}/*.jsonc):`,
+    );
+    for (const { name, version } of unusedDependencies.sort((a, b) =>
+      a.name.localeCompare(b.name),
+    )) {
       console.log(`  "${name}": "${version}",`);
     }
   } else {
     header(`All dependencies are referenced in ${packageDisplayPath}/*.jsonc.`);
   }
 
-  const { perFileScripts, perFileWireit } = collectScriptsAndWireit(jsoncFiles.map((f) => path.resolve(opts.cwd, f)));
+  const { perFileScripts, perFileWireit } = collectScriptsAndWireit(
+    jsoncFiles.map((f) => path.resolve(opts.cwd, f)),
+  );
 
   const scriptsMissing = findMissingFromPackages(
     rootPkg.scripts,
@@ -93,15 +117,26 @@ export async function runUpdatePackage(opts: { cwd: string; verbose: boolean; ar
   );
 
   const scriptsChanged = findChangedScripts(rootPkg.scripts, perFileScripts);
-  const wireitChanged = findChangedWireit(rootPkg.wireit as Record<string, unknown> | undefined, perFileWireit);
+  const wireitChanged = findChangedWireit(
+    rootPkg.wireit as Record<string, unknown> | undefined,
+    perFileWireit,
+  );
 
-  const scriptDupes = findDuplicateKeys(perFileScripts.map(({ file, scripts }) => ({ file, map: scripts })));
-  const wireitDupes = findDuplicateKeys(perFileWireit.map(({ file, wireit }) => ({ file, map: wireit })));
+  const scriptDupes = findDuplicateKeys(
+    perFileScripts.map(({ file, scripts }) => ({ file, map: scripts })),
+  );
+  const wireitDupes = findDuplicateKeys(
+    perFileWireit.map(({ file, wireit }) => ({ file, map: wireit })),
+  );
 
   header(`Scripts audit (root vs ${packageDisplayPath}/*.jsonc)`);
   if (scriptsMissing.length) {
-    console.log(`- Missing (in root, not listed in any ${packageDisplayPath}/*.jsonc):`);
-    scriptsMissing.forEach((n) => console.log(`  - ${n}`));
+    console.log(
+      `- Missing (in root, not listed in any ${packageDisplayPath}/*.jsonc):`,
+    );
+    scriptsMissing.forEach((n) => {
+      console.log(`  - ${n}`);
+    });
   } else {
     console.log("- No missing script entries.");
   }
@@ -109,7 +144,9 @@ export async function runUpdatePackage(opts: { cwd: string; verbose: boolean; ar
   if (scriptsChanged.length) {
     console.log("- Changed (defined in both, but command differs):");
     for (const c of scriptsChanged) {
-      console.log(`  - ${c.name} in ${path.relative(opts.cwd, c.file)}\n      root: ${c.root}\n      file: ${c.found}`);
+      console.log(
+        `  - ${c.name} in ${path.relative(opts.cwd, c.file)}\n      root: ${c.root}\n      file: ${c.found}`,
+      );
     }
   } else {
     console.log("- No changed script entries.");
@@ -119,7 +156,9 @@ export async function runUpdatePackage(opts: { cwd: string; verbose: boolean; ar
     console.log("- Duplicates (same script key in multiple files):");
     for (const d of scriptDupes) {
       console.log(`  - ${d.name}`);
-      d.files.forEach((f) => console.log(`      ${path.relative(opts.cwd, f)}`));
+      d.files.forEach((f) => {
+        console.log(`      ${path.relative(opts.cwd, f)}`);
+      });
     }
   } else {
     console.log("- No duplicate script entries.");
@@ -127,8 +166,12 @@ export async function runUpdatePackage(opts: { cwd: string; verbose: boolean; ar
 
   header(`Wireit audit (root vs ${packageDisplayPath}/*.jsonc)`);
   if (wireitMissing.length) {
-    console.log(`- Missing (in root, not listed in any ${packageDisplayPath}/*.jsonc):`);
-    wireitMissing.forEach((n) => console.log(`  - ${n}`));
+    console.log(
+      `- Missing (in root, not listed in any ${packageDisplayPath}/*.jsonc):`,
+    );
+    wireitMissing.forEach((n) => {
+      console.log(`  - ${n}`);
+    });
   } else {
     console.log("- No missing wireit entries.");
   }
@@ -146,7 +189,9 @@ export async function runUpdatePackage(opts: { cwd: string; verbose: boolean; ar
     console.log("- Duplicates (same wireit key in multiple files):");
     for (const d of wireitDupes) {
       console.log(`  - ${d.name}`);
-      d.files.forEach((f) => console.log(`      ${path.relative(opts.cwd, f)}`));
+      d.files.forEach((f) => {
+        console.log(`      ${path.relative(opts.cwd, f)}`);
+      });
     }
   } else {
     console.log("- No duplicate wireit entries.");
@@ -177,7 +222,11 @@ function printHelp(): void {
   );
 }
 
-async function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Promise<Options> {
+async function parseArgs(
+  argv: string[],
+  cwd: string,
+  globalVerbose: boolean,
+): Promise<Options> {
   let packagesDirOverride: string | undefined;
   const o: Options = { verbose: globalVerbose, help: false, packagesDir: "" };
 
@@ -271,17 +320,29 @@ export function collectUsedDeps(files: string[]): Set<string> {
 }
 
 export function collectScriptsAndWireit(files: string[]) {
-  const perFileScripts: Array<{ file: string; scripts: Record<string, string> }> = [];
-  const perFileWireit: Array<{ file: string; wireit: Record<string, unknown> }> = [];
+  const perFileScripts: Array<{
+    file: string;
+    scripts: Record<string, string>;
+  }> = [];
+  const perFileWireit: Array<{
+    file: string;
+    wireit: Record<string, unknown>;
+  }> = [];
 
   for (const file of files) {
     try {
       const json = loadJsonc<PackageJson>(file);
       if (json.scripts && typeof json.scripts === "object") {
-        perFileScripts.push({ file, scripts: json.scripts as Record<string, string> });
+        perFileScripts.push({
+          file,
+          scripts: json.scripts as Record<string, string>,
+        });
       }
       if (json.wireit && typeof json.wireit === "object") {
-        perFileWireit.push({ file, wireit: json.wireit as Record<string, unknown> });
+        perFileWireit.push({
+          file,
+          wireit: json.wireit as Record<string, unknown>,
+        });
       }
     } catch (e: unknown) {
       const err = e instanceof Error ? e : new Error(String(e));
@@ -301,14 +362,21 @@ export function findMissingFromPackages<T>(
   for (const { map } of perFile) {
     for (const k of Object.keys(map)) present.add(k);
   }
-  return Object.keys(rootMap).filter((k) => !present.has(k)).sort();
+  return Object.keys(rootMap)
+    .filter((k) => !present.has(k))
+    .sort();
 }
 
 export function findChangedScripts(
   rootScripts: Record<string, string> | undefined,
   perFileScripts: Array<{ file: string; scripts: Record<string, string> }>,
 ): Array<{ file: string; name: string; root: string; found: string }> {
-  const out: Array<{ file: string; name: string; root: string; found: string }> = [];
+  const out: Array<{
+    file: string;
+    name: string;
+    root: string;
+    found: string;
+  }> = [];
   const rs = rootScripts ?? {};
   for (const { file, scripts } of perFileScripts) {
     for (const [name, cmd] of Object.entries(scripts)) {

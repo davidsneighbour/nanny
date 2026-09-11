@@ -16,7 +16,11 @@ type Options = {
   packagesDir: string;
 };
 
-export async function runGeneratePackage(opts: { cwd: string; verbose: boolean; argv: string[] }): Promise<void> {
+export async function runGeneratePackage(opts: {
+  cwd: string;
+  verbose: boolean;
+  argv: string[];
+}): Promise<void> {
   const { cwd } = opts;
   const parsed = await parseArgs(opts.argv, cwd, opts.verbose);
   const packageGlob = createPackageGlob(cwd, parsed.packagesDir, "**/*.jsonc");
@@ -47,11 +51,12 @@ export async function runGeneratePackage(opts: { cwd: string; verbose: boolean; 
 
   if ("notes" in filteredPkg) {
     delete (filteredPkg as Record<string, unknown>)["notes"];
-    if (parsed.verbose) console.error('> Removed "notes" from package.json structure.');
+    if (parsed.verbose)
+      console.error('> Removed "notes" from package.json structure.');
   }
 
   const outputPath = path.resolve(cwd, "package.json");
-  const output = JSON.stringify(filteredPkg, null, 2) + "\n";
+  const output = `${JSON.stringify(filteredPkg, null, 2)}\n`;
 
   if (parsed.dryRun) {
     process.stdout.write(output);
@@ -88,7 +93,11 @@ function printHelp(): void {
   );
 }
 
-async function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Promise<Options> {
+async function parseArgs(
+  argv: string[],
+  cwd: string,
+  globalVerbose: boolean,
+): Promise<Options> {
   const defaultKeysToPreserve: string[] = [
     "name",
     "description",
@@ -145,14 +154,20 @@ async function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): P
       case "--keys": {
         const v = argv[i + 1];
         if (!v) throw new NannyError("Missing value for --keys", 1);
-        o.keysToPreserve = v.split(",").map((k) => k.trim()).filter(Boolean);
+        o.keysToPreserve = v
+          .split(",")
+          .map((k) => k.trim())
+          .filter(Boolean);
         i++;
         break;
       }
       case "--add-keys": {
         const v = argv[i + 1];
         if (!v) throw new NannyError("Missing value for --add-keys", 1);
-        addKeys = v.split(",").map((k) => k.trim()).filter(Boolean);
+        addKeys = v
+          .split(",")
+          .map((k) => k.trim())
+          .filter(Boolean);
         i++;
         break;
       }
@@ -188,7 +203,8 @@ function readJsonc(filePath: string): JsonObject {
  */
 function mergeDeep(target: JsonObject, source: JsonObject): JsonObject {
   for (const key of Object.keys(source)) {
-    if (key === "__proto__" || key === "constructor" || key === "prototype") continue;
+    if (key === "__proto__" || key === "constructor" || key === "prototype")
+      continue;
 
     const sv = source[key];
     const tv = target[key];

@@ -18,8 +18,7 @@ jobs:
         with:
           node-version: 24
       - run: npm ci
-      - run: npm run ci
-      - run: npm run test:package-init
+      - run: npm run check
 
   commitlint:
     if: github.event_name == 'pull_request'

@@ -4,7 +4,11 @@ import path from "node:path";
 import glob from "fast-glob";
 
 import { NannyError } from "../lib/errors.js";
-import { createPackageGlob, resolvePackagesDir, toPosixRelative } from "../lib/package-paths.js";
+import {
+  createPackageGlob,
+  resolvePackagesDir,
+  toPosixRelative,
+} from "../lib/package-paths.js";
 import { runMergeVscodeConfig } from "./merge-vscode-config.js";
 import {
   collectScriptsAndWireit,
@@ -25,7 +29,11 @@ type Options = {
   packagesDir: string;
 };
 
-export async function runCheck(opts: { cwd: string; verbose: boolean; argv: string[] }): Promise<void> {
+export async function runCheck(opts: {
+  cwd: string;
+  verbose: boolean;
+  argv: string[];
+}): Promise<void> {
   const options = await parseArgs(opts.argv, opts.cwd, opts.verbose);
 
   if (options.help) {
@@ -36,7 +44,8 @@ export async function runCheck(opts: { cwd: string; verbose: boolean; argv: stri
   let critical = false;
 
   header("Package fragments");
-  critical = (await checkPackageFragments(opts.cwd, options.packagesDir)) || critical;
+  critical =
+    (await checkPackageFragments(opts.cwd, options.packagesDir)) || critical;
 
   header("VS Code settings");
   critical = (await checkVscodeSettings(opts.cwd)) || critical;
@@ -46,12 +55,18 @@ export async function runCheck(opts: { cwd: string; verbose: boolean; argv: stri
 
   console.log("");
   if (critical) {
-    throw new NannyError("nanny check found issues that need attention. See above for details.", 1);
+    throw new NannyError(
+      "nanny check found issues that need attention. See above for details.",
+      1,
+    );
   }
   console.log("✔ No issues found.");
 }
 
-async function checkPackageFragments(cwd: string, packagesDir: string): Promise<boolean> {
+async function checkPackageFragments(
+  cwd: string,
+  packagesDir: string,
+): Promise<boolean> {
   const rootPkgAbs = path.resolve(cwd, "package.json");
   if (!fs.existsSync(rootPkgAbs)) {
     console.log("- Skipped: no package.json found.");
@@ -60,10 +75,16 @@ async function checkPackageFragments(cwd: string, packagesDir: string): Promise<
 
   const packageJsoncGlob = createPackageGlob(cwd, packagesDir, "**/*.jsonc");
   const packageDisplayPath = toPosixRelative(cwd, packagesDir);
-  const jsoncFiles = await glob(packageJsoncGlob, { dot: false, cwd, absolute: false });
+  const jsoncFiles = await glob(packageJsoncGlob, {
+    dot: false,
+    cwd,
+    absolute: false,
+  });
 
   if (jsoncFiles.length === 0) {
-    console.log(`- Skipped: no package fragments found under ${packageDisplayPath}.`);
+    console.log(
+      `- Skipped: no package fragments found under ${packageDisplayPath}.`,
+    );
     return false;
   }
 
@@ -72,7 +93,12 @@ async function checkPackageFragments(cwd: string, packagesDir: string): Promise<
 
   let critical = false;
 
-  const drifted: Array<{ file: string; name: string; from: string; to: string }> = [];
+  const drifted: Array<{
+    file: string;
+    name: string;
+    from: string;
+    to: string;
+  }> = [];
   for (const file of absoluteFiles) {
     const json = loadJsonc<PackageJson>(file);
     for (const d of computeVersionDrift(json, rootPkg)) {
@@ -82,9 +108,13 @@ async function checkPackageFragments(cwd: string, packagesDir: string): Promise<
 
   if (drifted.length > 0) {
     critical = true;
-    console.log("- Dependency versions out of sync with package.json (run `nanny update-package`):");
+    console.log(
+      "- Dependency versions out of sync with package.json (run `nanny update-package`):",
+    );
     for (const d of drifted) {
-      console.log(`  - ${d.name}: ${d.from} -> ${d.to} in ${path.relative(cwd, d.file)}`);
+      console.log(
+        `  - ${d.name}: ${d.from} -> ${d.to} in ${path.relative(cwd, d.file)}`,
+      );
     }
   } else {
     console.log("- Dependency versions in sync.");
@@ -100,10 +130,13 @@ async function checkPackageFragments(cwd: string, packagesDir: string): Promise<
     }
   }
   if (unused.length > 0) {
-    console.log(`- Unused root dependencies (not referenced in any fragment): ${unused.sort().join(", ")}`);
+    console.log(
+      `- Unused root dependencies (not referenced in any fragment): ${unused.sort().join(", ")}`,
+    );
   }
 
-  const { perFileScripts, perFileWireit } = collectScriptsAndWireit(absoluteFiles);
+  const { perFileScripts, perFileWireit } =
+    collectScriptsAndWireit(absoluteFiles);
 
   const scriptsMissing = findMissingFromPackages(
     rootPkg.scripts,
@@ -115,22 +148,32 @@ async function checkPackageFragments(cwd: string, packagesDir: string): Promise<
   );
   const scriptsChanged = findChangedScripts(rootPkg.scripts, perFileScripts);
   const wireitChanged = findChangedWireit(rootPkg.wireit, perFileWireit);
-  const scriptDupes = findDuplicateKeys(perFileScripts.map(({ file, scripts }) => ({ file, map: scripts })));
-  const wireitDupes = findDuplicateKeys(perFileWireit.map(({ file, wireit }) => ({ file, map: wireit })));
+  const scriptDupes = findDuplicateKeys(
+    perFileScripts.map(({ file, scripts }) => ({ file, map: scripts })),
+  );
+  const wireitDupes = findDuplicateKeys(
+    perFileWireit.map(({ file, wireit }) => ({ file, map: wireit })),
+  );
 
-  const scriptIssues = scriptsMissing.length + scriptsChanged.length + scriptDupes.length;
-  const wireitIssues = wireitMissing.length + wireitChanged.length + wireitDupes.length;
+  const scriptIssues =
+    scriptsMissing.length + scriptsChanged.length + scriptDupes.length;
+  const wireitIssues =
+    wireitMissing.length + wireitChanged.length + wireitDupes.length;
 
   if (scriptIssues > 0) {
     critical = true;
-    console.log(`- Scripts out of sync (run \`nanny update-package\` for details): ${scriptIssues} issue(s).`);
+    console.log(
+      `- Scripts out of sync (run \`nanny update-package\` for details): ${scriptIssues} issue(s).`,
+    );
   } else {
     console.log("- Scripts in sync.");
   }
 
   if (wireitIssues > 0) {
     critical = true;
-    console.log(`- Wireit config out of sync (run \`nanny update-package\` for details): ${wireitIssues} issue(s).`);
+    console.log(
+      `- Wireit config out of sync (run \`nanny update-package\` for details): ${wireitIssues} issue(s).`,
+    );
   } else {
     console.log("- Wireit config in sync.");
   }
@@ -151,7 +194,9 @@ async function checkVscodeSettings(cwd: string): Promise<boolean> {
     return false;
   } catch (e: unknown) {
     if (e instanceof NannyError) {
-      console.log(`- .vscode/settings.json is out of date (run \`nanny merge-vscode-config\`): ${e.message}`);
+      console.log(
+        `- .vscode/settings.json is out of date (run \`nanny merge-vscode-config\`): ${e.message}`,
+      );
       return true;
     }
     throw e;
@@ -161,7 +206,10 @@ async function checkVscodeSettings(cwd: string): Promise<boolean> {
 function checkUncommittedGeneratedFiles(cwd: string): boolean {
   let inGitRepo = true;
   try {
-    execFileSync("git", ["rev-parse", "--show-toplevel"], { cwd, stdio: ["ignore", "ignore", "ignore"] });
+    execFileSync("git", ["rev-parse", "--show-toplevel"], {
+      cwd,
+      stdio: ["ignore", "ignore", "ignore"],
+    });
   } catch {
     inGitRepo = false;
   }
@@ -180,7 +228,10 @@ function checkUncommittedGeneratedFiles(cwd: string): boolean {
 
     let status: string;
     try {
-      status = execFileSync("git", ["status", "--porcelain", "--", rel], { cwd, encoding: "utf8" });
+      status = execFileSync("git", ["status", "--porcelain", "--", rel], {
+        cwd,
+        encoding: "utf8",
+      });
     } catch {
       continue;
     }
@@ -189,7 +240,9 @@ function checkUncommittedGeneratedFiles(cwd: string): boolean {
   }
 
   if (dirty.length > 0) {
-    console.log(`- Uncommitted changes in generated files: ${dirty.join(", ")}`);
+    console.log(
+      `- Uncommitted changes in generated files: ${dirty.join(", ")}`,
+    );
     return true;
   }
 
@@ -219,7 +272,11 @@ function printHelp(): void {
   );
 }
 
-async function parseArgs(argv: string[], cwd: string, globalVerbose: boolean): Promise<Options> {
+async function parseArgs(
+  argv: string[],
+  cwd: string,
+  globalVerbose: boolean,
+): Promise<Options> {
   let packagesDirOverride: string | undefined;
   const o: Options = { verbose: globalVerbose, help: false, packagesDir: "" };
 

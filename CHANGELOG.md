@@ -11,7 +11,7 @@
 * **editorconfig:** add nanny editorconfig command ([b8a9078](https://github.com/davidsneighbour/nanny/commit/b8a907812fdfbe1fce8d145859cd3ceb9a6dedb6)), closes [#14](https://github.com/davidsneighbour/nanny/issues/14)
 * **generate-package:** add --add-keys to extend the preserve list ([072b7c1](https://github.com/davidsneighbour/nanny/commit/072b7c18d677fcdb0d75579369f893e19d706c0c)), closes [#23](https://github.com/davidsneighbour/nanny/issues/23)
 
-### Bug Fixes
+### Bug fixes
 
 * **build:** restore outDir/rootDir so npm run build actually emits ([27b8e8e](https://github.com/davidsneighbour/nanny/commit/27b8e8e68c3bfe169829abcf0baa116d924f2e31)), closes [#32](https://github.com/davidsneighbour/nanny/issues/32)
 * **ci:** correct dependabot label and remove dead gomod ecosystem ([e95a10d](https://github.com/davidsneighbour/nanny/commit/e95a10db603bd2b49ca11678cb7dd7db0759ff05)), closes [#21](https://github.com/davidsneighbour/nanny/issues/21) [#25](https://github.com/davidsneighbour/nanny/issues/25)
@@ -42,7 +42,7 @@
 
 ## [0.4.1](https://github.com/davidsneighbour/nanny/compare/v0.4.0...v0.4.1) (2026-06-28)
 
-### Bug Fixes
+### Bug fixes
 
 * **deps:** update release-it to 20.2.1 to patch undici CVEs ([4851b9e](https://github.com/davidsneighbour/nanny/commit/4851b9e4257f0f0fb843b58e5fe315a84a8eb26e)), closes [#27](https://github.com/davidsneighbour/nanny/issues/27)
 
@@ -76,7 +76,7 @@
 * **package:** support configurable init package dir ([06b762d](https://github.com/davidsneighbour/nanny/commit/06b762d376e0df95859555f52a57c5ca4ff64f64))
 * **package:** support configurable update package dir ([c2ea335](https://github.com/davidsneighbour/nanny/commit/c2ea335b65b0c5210dc0881b5196723b6da20496))
 
-### Bug Fixes
+### Bug fixes
 
 * rework type errors ([446a71f](https://github.com/davidsneighbour/nanny/commit/446a71f7ddc9029454e75ab74935793b5de6fa5a))
 
@@ -104,7 +104,7 @@
 * **package:** add package init command ([cbfe11b](https://github.com/davidsneighbour/nanny/commit/cbfe11b34714ee12008e9a72798b27e29846e137))
 * **package:** wire package init command ([97f5b34](https://github.com/davidsneighbour/nanny/commit/97f5b34231e36222aade9fc4fbed0a4298bd1358))
 
-### Bug Fixes
+### Bug fixes
 
 * remove static jsonc files ([6d6a75b](https://github.com/davidsneighbour/nanny/commit/6d6a75bf5d23cf297aa2a2a4d7e58233296c5613))
 

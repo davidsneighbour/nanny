@@ -33,7 +33,11 @@ const DEFAULT_SECTIONS: EditorConfigSection[] = [
   },
   {
     header: "*.md",
-    lines: ["indent_style = space", "indent_size = 2", "trim_trailing_whitespace = false"],
+    lines: [
+      "indent_style = space",
+      "indent_size = 2",
+      "trim_trailing_whitespace = false",
+    ],
   },
   {
     header: "*.{yml,yaml}",
@@ -52,7 +56,11 @@ type Options = {
   help: boolean;
 };
 
-export async function runEditorconfig(opts: { cwd: string; verbose: boolean; argv: string[] }): Promise<void> {
+export async function runEditorconfig(opts: {
+  cwd: string;
+  verbose: boolean;
+  argv: string[];
+}): Promise<void> {
   const options = parseArgs(opts.argv, opts.verbose);
 
   if (options.help) {
@@ -63,7 +71,9 @@ export async function runEditorconfig(opts: { cwd: string; verbose: boolean; arg
   const outPath = path.resolve(opts.cwd, options.out);
   const exists = fs.existsSync(outPath);
 
-  const existing = exists ? parseEditorConfig(fs.readFileSync(outPath, "utf8")) : { preamble: [], sections: [] };
+  const existing = exists
+    ? parseEditorConfig(fs.readFileSync(outPath, "utf8"))
+    : { preamble: [], sections: [] };
   const merged = mergeEditorConfig(existing);
   const formatted = renderEditorConfig(merged);
 
@@ -80,7 +90,8 @@ export async function runEditorconfig(opts: { cwd: string; verbose: boolean; arg
 
   const current = fs.readFileSync(outPath, "utf8");
   if (current === formatted) {
-    if (options.verbose) console.log(`[nanny editorconfig] Already up to date: ${outPath}`);
+    if (options.verbose)
+      console.log(`[nanny editorconfig] Already up to date: ${outPath}`);
     return;
   }
 
@@ -90,9 +101,12 @@ export async function runEditorconfig(opts: { cwd: string; verbose: boolean; arg
 
 /** Replaces nanny-managed sections with current defaults; preserves every other section as-is. */
 function mergeEditorConfig(existing: ParsedEditorConfig): ParsedEditorConfig {
-  const preamble = existing.preamble.length > 0 ? existing.preamble : DEFAULT_PREAMBLE;
+  const preamble =
+    existing.preamble.length > 0 ? existing.preamble : DEFAULT_PREAMBLE;
   const managedHeaders = new Set(DEFAULT_SECTIONS.map((s) => s.header));
-  const preserved = existing.sections.filter((s) => !managedHeaders.has(s.header));
+  const preserved = existing.sections.filter(
+    (s) => !managedHeaders.has(s.header),
+  );
 
   return { preamble, sections: [...DEFAULT_SECTIONS, ...preserved] };
 }
@@ -123,7 +137,10 @@ function parseEditorConfig(content: string): ParsedEditorConfig {
   return { preamble, sections };
 }
 
-function renderEditorConfig({ preamble, sections }: ParsedEditorConfig): string {
+function renderEditorConfig({
+  preamble,
+  sections,
+}: ParsedEditorConfig): string {
   const parts: string[] = [];
   if (preamble.length > 0) parts.push(preamble.join("\n"));
   for (const section of sections) {
@@ -181,6 +198,7 @@ function parseArgs(argv: string[], globalVerbose: boolean): Options {
 
 function requireValue(argv: string[], idx: number, flag: string): string {
   const v = argv[idx];
-  if (!v || v.startsWith("--")) throw new NannyError(`Missing value for ${flag}`, 1);
+  if (!v || v.startsWith("--"))
+    throw new NannyError(`Missing value for ${flag}`, 1);
   return v;
 }

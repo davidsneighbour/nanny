@@ -3,7 +3,10 @@ export type GlobalOptions = {
   verbose: boolean;
 };
 
-export function getFlagValue(argv: readonly string[], name: string): string | undefined {
+export function getFlagValue(
+  argv: readonly string[],
+  name: string,
+): string | undefined {
   const idx = argv.indexOf(name);
   if (idx === -1) return undefined;
   const value = argv[idx + 1];
@@ -36,4 +39,3 @@ export function stripGlobalFlags(argv: readonly string[]): string[] {
 
   return out;
 }
-
