@@ -12,6 +12,7 @@ Repo management and maintenance CLI for @davidsneighbour's projects.
   * [merge-vscode-config](#merge-vscode-config)
   * [check](#check)
   * [editorconfig](#editorconfig)
+* [Agent skill](#agent-skill)
 * [Tests](#tests)
 
 ## Installation
@@ -217,6 +218,42 @@ Examples:
 ```bash
 nanny editorconfig
 nanny editorconfig --dry-run
+```
+
+## Agent skill
+
+This repository ships an [Agent Skill](https://agentskills.io) at
+[`skills/nanny`](skills/nanny/SKILL.md) that teaches a coding agent how to
+maintain a project's `package.json` through nanny's fragment workflow
+(routing dependency, script, and metadata changes to the right
+`references/*.md` procedure, then finalising with `nanny generate-package`
+and `nanny check`).
+
+Install it with the [`skills` CLI](https://github.com/vercel-labs/skills):
+
+```bash
+# Claude Code (installs to .claude/skills/)
+npx skills add davidsneighbour/nanny --skill nanny -a claude-code
+
+# OpenAI Codex (installs to .agents/skills/)
+npx skills add davidsneighbour/nanny --skill nanny -a codex
+
+# Both, in one project (or drop -a entirely to be prompted per detected agent)
+npx skills add davidsneighbour/nanny --skill nanny -a claude-code -a codex
+```
+
+Add `-g` to install globally (`~/.claude/skills/` or `~/.codex/skills/`)
+instead of into the current project.
+
+Without the CLI, install it manually by copying the `skills/nanny`
+directory into the target location:
+
+```bash
+# Claude Code
+mkdir -p .claude/skills && cp -r skills/nanny .claude/skills/nanny
+
+# OpenAI Codex
+mkdir -p .agents/skills && cp -r skills/nanny .agents/skills/nanny
 ```
 
 ## Tests
