@@ -1,7 +1,6 @@
 confbox
 davidsneighbour
 dnbhq
-fixpack
 gomod
 kollitsch
 lintstaged
