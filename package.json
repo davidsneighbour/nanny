@@ -16,7 +16,7 @@
     "@commitlint/config-conventional": "21.2.0",
     "@dnbhq/tsconfig": "0.1.6",
     "@release-it/conventional-changelog": "11.0.1",
-    "@types/node": "26.1.1",
+    "@types/node": "26.6.5",
     "cspell": "10.0.1",
     "release-it": "20.2.1",
     "simple-git-hooks": "2.13.1",
