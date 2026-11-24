@@ -79,7 +79,7 @@ function printHelp(): void {
       "",
       "Options:",
       "  --package <path>       Path to package.json (default: <cwd>/package.json)",
-      "  --packages-dir <path>  Package fragments directory (default: repo/local config, NANNY_PACKAGES_DIR, or src/packages)",
+      "  --packages-dir <path>  Package fragments directory (default: NANNY_PACKAGES_DIR, .env, local/repo config, or src/packages)",
       "  --force                Overwrite existing starter and default package fragments",
       "  --verbose              More logs",
       "  --help                 Show help for this command",

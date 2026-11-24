@@ -3,3 +3,4 @@ dist/
 .wireit/
 scratch/
 nanny.config.local.jsonc
+.env
