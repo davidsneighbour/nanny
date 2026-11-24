@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.0](https://github.com/davidsneighbour/nanny/compare/v0.6.0...v0.7.0) (2026-11-24)
+
+### Feat
+
+* **config:** read NANNY_PACKAGES_DIR from a local .env file ([#67](https://github.com/davidsneighbour/nanny/issues/67)) ([3e89682](https://github.com/davidsneighbour/nanny/commit/3e89682cfde70d6ab31044904e4505edfcf1815d)), closes [#66](https://github.com/davidsneighbour/nanny/issues/66)
+
 ## [0.6.0](https://github.com/davidsneighbour/nanny/compare/v0.5.0...v0.6.0) (2026-11-24)
 
 ### Feat
