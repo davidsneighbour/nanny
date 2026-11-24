@@ -59,8 +59,57 @@ try {
 
   assert.deepEqual(generatedPackage, originalPackage);
   console.log("Package init custom packages dir roundtrip test passed.");
+
+  testDotenvPackagesDir(originalPackage);
 } finally {
   fs.rmSync(tempRoot, { force: true, recursive: true });
+}
+
+/**
+ * Checks that `NANNY_PACKAGES_DIR` in `.env` is used, and that a real
+ * environment variable takes precedence over it.
+ */
+function testDotenvPackagesDir(originalPackage: unknown): void {
+  const dotenvRoot = path.join(tempRoot, "dotenv");
+  const dotenvDir = "config/from-dotenv";
+  const envDir = "config/from-env";
+  const { NANNY_PACKAGES_DIR: _ignored, ...baseEnv } = process.env;
+
+  fs.mkdirSync(dotenvRoot, { recursive: true });
+  fs.writeFileSync(
+    path.join(dotenvRoot, "package.json"),
+    `${JSON.stringify(originalPackage, null, 2)}\n`,
+    "utf8",
+  );
+  fs.writeFileSync(
+    path.join(dotenvRoot, ".env"),
+    `NANNY_PACKAGES_DIR=${dotenvDir}\n`,
+    "utf8",
+  );
+
+  const runPackageInit = (env: NodeJS.ProcessEnv): void => {
+    execFileSync(
+      process.execPath,
+      [cliPath, "package-init", "--cwd", dotenvRoot, "--force"],
+      { encoding: "utf8", env, stdio: "pipe" },
+    );
+  };
+
+  runPackageInit(baseEnv);
+  assert.equal(
+    fs.existsSync(path.join(dotenvRoot, dotenvDir, "system/default.jsonc")),
+    true,
+    ".env NANNY_PACKAGES_DIR was not used",
+  );
+
+  runPackageInit({ ...baseEnv, NANNY_PACKAGES_DIR: envDir });
+  assert.equal(
+    fs.existsSync(path.join(dotenvRoot, envDir, "system/default.jsonc")),
+    true,
+    "environment NANNY_PACKAGES_DIR did not take precedence over .env",
+  );
+
+  console.log("Package init .env packages dir test passed.");
 }
 
 function readJson(filePath: string): unknown {

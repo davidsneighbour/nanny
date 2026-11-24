@@ -75,7 +75,7 @@ function printHelp(): void {
       "",
       "Options:",
       "  --package <path>       Path to package.json (default: <cwd>/package.json)",
-      "  --packages-dir <path>  Package fragments directory (default: repo/local config, NANNY_PACKAGES_DIR, or src/packages)",
+      "  --packages-dir <path>  Package fragments directory (default: NANNY_PACKAGES_DIR, .env, local/repo config, or src/packages)",
       "  --keys <list>          Comma-separated list of keys to preserve from package.json (replaces the default list)",
       "  --add-keys <list>      Comma-separated list of keys to add to the preserve list (extends --keys or the default)",
       "  --dry-run              Print merged JSON to stdout, do not write file",

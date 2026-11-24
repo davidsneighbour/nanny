@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { parseEnv } from "node:util";
 
 import { loadConfig } from "c12";
 import { parseJSONC } from "confbox";
@@ -10,6 +11,7 @@ export const NANNY_CONFIG_NAME = "nanny";
 export const DEFAULT_PACKAGES_DIR = "src/packages";
 export const PACKAGES_DIR_ENV_VAR = "NANNY_PACKAGES_DIR";
 export const LOCAL_CONFIG_FILENAME = "nanny.config.local.jsonc";
+export const DOTENV_FILENAME = ".env";
 
 type JsonObject = Record<string, unknown>;
 
@@ -41,7 +43,8 @@ const DEFAULT_NANNY_CONFIG: NannyConfig = {
  * repo-local, meant to be committed). A gitignored `nanny.config.local.jsonc`
  * in the working directory, if present, overrides those values for
  * per-machine settings that shouldn't be committed. CLI and environment
- * overrides have the highest precedence.
+ * overrides have the highest precedence. `NANNY_PACKAGES_DIR` is read from the
+ * process environment first, then from a `.env` file in the working directory.
  *
  * @param options - Loader options, including the working directory and optional package directory override.
  * @returns The loaded and validated Nanny configuration.
@@ -52,6 +55,7 @@ export async function loadNannyConfig(
 ): Promise<LoadedNannyConfig> {
   const cwd = path.resolve(options.cwd);
   const packagesDirOverride = getPackagesDirOverride(
+    cwd,
     options.packagesDirOverride,
   );
 
@@ -145,6 +149,7 @@ function readLocalConfigOverride(
 }
 
 function getPackagesDirOverride(
+  cwd: string,
   cliOverride: string | undefined,
 ): string | undefined {
   const cliValue = cliOverride?.trim();
@@ -159,7 +164,32 @@ function getPackagesDirOverride(
     return envValue;
   }
 
+  const dotenvValue = readDotenvValue(cwd, PACKAGES_DIR_ENV_VAR)?.trim();
+
+  if (dotenvValue && dotenvValue.length > 0) {
+    return dotenvValue;
+  }
+
   return undefined;
+}
+
+/**
+ * Reads one variable from `.env` in `cwd`, if the file exists.
+ *
+ * The file is parsed with Node's `util.parseEnv`; `process.env` is not changed.
+ */
+function readDotenvValue(cwd: string, key: string): string | undefined {
+  const dotenvPath = path.resolve(cwd, DOTENV_FILENAME);
+  if (!fs.existsSync(dotenvPath)) {
+    return undefined;
+  }
+
+  try {
+    return parseEnv(fs.readFileSync(dotenvPath, "utf8"))[key];
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new NannyError(`Failed to read ${dotenvPath}: ${message}`, 1);
+  }
 }
 
 function parseNannyConfig(value: unknown): NannyConfig {

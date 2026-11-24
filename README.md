@@ -4,6 +4,7 @@ Repo management and maintenance CLI for @davidsneighbour's projects.
 
 * [Installation](#installation)
 * [Global usage](#global-usage)
+  * [Fragment directory](#fragment-directory)
 * [Configuration](#configuration)
 * [Commands](#commands)
   * [package-init](#package-init)
@@ -32,13 +33,31 @@ Commands run relative to `--cwd` (defaults to the current working directory).
 
 Run `nanny --version` (or `-v`) to print the installed version.
 
-Package fragment commands read their fragment directory from this precedence order:
+### Fragment directory
 
-* `--packages-dir <path>`
-* `NANNY_PACKAGES_DIR`
-* `nanny.config.local.jsonc` in the working directory (gitignored, per-machine override)
-* Nanny configuration loaded through `c12` (repo-local, committed)
-* `src/packages`
+The fragment ("particle") JSONC files go in `src/packages` by default. Nanny resolves this path against the working directory, which is the current directory or the `--cwd` value.
+
+`package-init` writes `legacy/starter.jsonc` and `system/default.jsonc` into that folder. `generate-package`, `update-package`, and `check` read every `**/*.jsonc` file in it.
+
+Nanny picks the first value it finds, in this order:
+
+1. **CLI flag `--packages-dir <path>`.** The `package-init`, `generate-package`, `update-package`, and `check` commands all take it.
+2. **Environment variable `NANNY_PACKAGES_DIR`.**
+3. **`NANNY_PACKAGES_DIR` in a `.env` file in the working directory.** Do not commit this file to git.
+4. **`nanny.config.local.jsonc` in the working directory.** Use this file for settings on one machine only. Do not commit it to git.
+5. **The shared config file, which you commit.** Nanny loads it with c12, so it can be any of the files in [Configuration](#configuration), for example `nanny.config.jsonc` or a `"nanny"` key in `package.json`.
+6. **The default, `src/packages`.**
+
+```bash
+nanny package-init --packages-dir config/package-particles
+NANNY_PACKAGES_DIR=config/package-particles nanny generate-package
+echo "NANNY_PACKAGES_DIR=config/package-particles" >> .env
+```
+
+Notes:
+
+* **Relative paths:** Nanny resolves a relative path against the working directory, not against the config file. So `--cwd` changes where the folder ends up.
+* **Empty or missing values:** Nanny ignores an empty or whitespace-only value from the flag, the environment variable, `.env`, or the local file, and goes to the next level. An empty `packagesDir` in the shared config file is different: it stops with an error (exit code 1).
 
 ## Configuration
 
@@ -95,7 +114,7 @@ Example `package.json` configuration:
 
 ### Local overrides
 
-A gitignored `nanny.config.local.jsonc` in the working directory overrides the repo-local config above, for per-machine settings that shouldn't be committed. It's applied after the `c12`-loaded config and before CLI flags / env vars.
+A gitignored `nanny.config.local.jsonc` in the working directory overrides the repo-local config above, for per-machine settings that shouldn't be committed. It's applied after the `c12`-loaded config and before `.env`, environment variables, and CLI flags.
 
 ```jsonc
 // nanny.config.local.jsonc (gitignored)
@@ -104,7 +123,7 @@ A gitignored `nanny.config.local.jsonc` in the working directory overrides the r
 }
 ```
 
-CLI and environment overrides still take precedence over configuration files:
+CLI flags, environment variables, and `.env` still take precedence over configuration files (see [Fragment directory](#fragment-directory)):
 
 ```bash
 nanny generate-package --packages-dir config/package-particles --dry-run

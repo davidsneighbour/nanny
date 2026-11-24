@@ -12,7 +12,7 @@ Maintain `package.json` through a single coordinated workflow.
 
 `package.json` is a generated file. The real source of truth is a directory
 of JSONC fragments, by default `src/packages/**/*.jsonc` (overridable via
-`--packages-dir`, `NANNY_PACKAGES_DIR`, `nanny.config.local.jsonc`, or a
+`--packages-dir`, `NANNY_PACKAGES_DIR`, `.env`, `nanny.config.local.jsonc`, or a
 committed `nanny.config.jsonc`). Three commands drive the workflow:
 
 * `nanny generate-package` — reads every fragment, deep-merges them over a
