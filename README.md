@@ -2,17 +2,18 @@
 
 Repo management and maintenance CLI for @davidsneighbour's projects.
 
-- [Installation](#installation)
-- [Global usage](#global-usage)
-- [Configuration](#configuration)
-- [Commands](#commands)
-  - [package-init](#package-init)
-  - [generate-package](#generate-package)
-  - [update-package](#update-package)
-  - [merge-vscode-config](#merge-vscode-config)
-  - [check](#check)
-  - [editorconfig](#editorconfig)
-- [Tests](#tests)
+* [Installation](#installation)
+* [Global usage](#global-usage)
+* [Configuration](#configuration)
+* [Commands](#commands)
+  * [package-init](#package-init)
+  * [generate-package](#generate-package)
+  * [update-package](#update-package)
+  * [merge-vscode-config](#merge-vscode-config)
+  * [check](#check)
+  * [editorconfig](#editorconfig)
+* [Agent skill](#agent-skill)
+* [Tests](#tests)
 
 ## Installation
 
@@ -112,7 +113,7 @@ NANNY_PACKAGES_DIR=config/package-particles nanny update-package
 
 ## Commands
 
-### package-init
+### Package-init
 
 Creates the initial package fragment files expected by `update-package` and `generate-package`.
 
@@ -135,7 +136,7 @@ nanny package-init --packages-dir config/package-particles
 NANNY_PACKAGES_DIR=config/package-particles nanny package-init
 ```
 
-### generate-package
+### Generate-package
 
 Merges all `<packages-dir>/**/*.jsonc` into `package.json`, while preserving a configurable set of keys from the original `package.json`.
 
@@ -154,7 +155,7 @@ NANNY_PACKAGES_DIR=config/package-particles nanny generate-package --dry-run
 nanny generate-package --add-keys workspaces --dry-run
 ```
 
-### update-package
+### Update-package
 
 Synchronises dependency versions in `<packages-dir>/**/*.jsonc` against the root `package.json`, then audits:
 
@@ -175,7 +176,7 @@ nanny update-package --packages-dir config/package-particles
 NANNY_PACKAGES_DIR=config/package-particles nanny update-package
 ```
 
-### merge-vscode-config
+### Merge-vscode-config
 
 Merges `.vscode/settings.base.jsonc` and `.vscode/settings.local.jsonc` (optional) into `.vscode/settings.json`.
 
@@ -183,7 +184,7 @@ Merges `.vscode/settings.base.jsonc` and `.vscode/settings.local.jsonc` (optiona
 nanny merge-vscode-config [--base <path>] [--local <path>] [--out <path>] [--check] [--dry-run] [--verbose]
 ```
 
-### check
+### Check
 
 Read-only report of repo maintenance tasks. Makes no changes; exits non-zero only if actionable issues are found.
 
@@ -204,7 +205,7 @@ nanny check
 nanny check --packages-dir config/package-particles
 ```
 
-### editorconfig
+### Editorconfig
 
 Writes `.editorconfig` with davidsneighbour's sensible defaults if none exists. If a file already exists, its nanny-managed sections (`[*]`, `[*.md]`, `[*.{yml,yaml}]`, `[*.{json,jsonc}]`) are refreshed to the current defaults; any other section is preserved as-is.
 
@@ -217,6 +218,42 @@ Examples:
 ```bash
 nanny editorconfig
 nanny editorconfig --dry-run
+```
+
+## Agent skill
+
+This repository ships an [Agent Skill](https://agentskills.io) at
+[`skills/nanny`](skills/nanny/SKILL.md) that teaches a coding agent how to
+maintain a project's `package.json` through nanny's fragment workflow
+(routing dependency, script, and metadata changes to the right
+`references/*.md` procedure, then finalising with `nanny generate-package`
+and `nanny check`).
+
+Install it with the [`skills` CLI](https://github.com/vercel-labs/skills):
+
+```bash
+# Claude Code (installs to .claude/skills/)
+npx skills add davidsneighbour/nanny --skill nanny -a claude-code
+
+# OpenAI Codex (installs to .agents/skills/)
+npx skills add davidsneighbour/nanny --skill nanny -a codex
+
+# Both, in one project (or drop -a entirely to be prompted per detected agent)
+npx skills add davidsneighbour/nanny --skill nanny -a claude-code -a codex
+```
+
+Add `-g` to install globally (`~/.claude/skills/` or `~/.codex/skills/`)
+instead of into the current project.
+
+Without the CLI, install it manually by copying the `skills/nanny`
+directory into the target location:
+
+```bash
+# Claude Code
+mkdir -p .claude/skills && cp -r skills/nanny .claude/skills/nanny
+
+# OpenAI Codex
+mkdir -p .agents/skills && cp -r skills/nanny .agents/skills/nanny
 ```
 
 ## Tests

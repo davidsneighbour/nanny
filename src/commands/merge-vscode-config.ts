@@ -16,7 +16,11 @@ type CliOptions = {
   help: boolean;
 };
 
-export async function runMergeVscodeConfig(opts: { cwd: string; verbose: boolean; argv: string[] }): Promise<void> {
+export async function runMergeVscodeConfig(opts: {
+  cwd: string;
+  verbose: boolean;
+  argv: string[];
+}): Promise<void> {
   const options = parseArgs(opts.argv, opts.verbose);
 
   if (options.help) {
@@ -40,27 +44,39 @@ export async function runMergeVscodeConfig(opts: { cwd: string; verbose: boolean
   if (hasLocal) {
     localJson = readJsoncObject(localPath, options.verbose);
   } else if (options.verbose) {
-    console.log(`[nanny merge-vscode-config] Local file not found (ok): ${localPath}`);
+    console.log(
+      `[nanny merge-vscode-config] Local file not found (ok): ${localPath}`,
+    );
   }
 
   const merged = deepMerge(baseJson, localJson);
-  const formatted = JSON.stringify(merged, null, 2) + "\n";
+  const formatted = `${JSON.stringify(merged, null, 2)}\n`;
 
   const outDir = path.dirname(outPath);
   if (!fs.existsSync(outDir)) {
-    if (options.verbose) console.log(`[nanny merge-vscode-config] Creating directory: ${outDir}`);
+    if (options.verbose)
+      console.log(`[nanny merge-vscode-config] Creating directory: ${outDir}`);
     fs.mkdirSync(outDir, { recursive: true });
   }
 
   if (options.check) {
     if (!fs.existsSync(outPath)) {
-      throw new NannyError(`CHECK FAILED: Output file does not exist: ${outPath}`, 1);
+      throw new NannyError(
+        `CHECK FAILED: Output file does not exist: ${outPath}`,
+        1,
+      );
     }
     const current = fs.readFileSync(outPath, "utf8");
     if (current !== formatted) {
-      throw new NannyError(`CHECK FAILED: ${outPath} is out of date. Run nanny merge-vscode-config.`, 1);
+      throw new NannyError(
+        `CHECK FAILED: ${outPath} is out of date. Run nanny merge-vscode-config.`,
+        1,
+      );
     }
-    if (options.verbose) console.log("[nanny merge-vscode-config] CHECK OK: Output matches merged settings.");
+    if (options.verbose)
+      console.log(
+        "[nanny merge-vscode-config] CHECK OK: Output matches merged settings.",
+      );
     return;
   }
 
@@ -74,7 +90,9 @@ export async function runMergeVscodeConfig(opts: { cwd: string; verbose: boolean
   if (options.verbose) {
     console.log(`[nanny merge-vscode-config] Wrote: ${outPath}`);
     console.log(`[nanny merge-vscode-config] base:  ${basePath}`);
-    console.log(`[nanny merge-vscode-config] local: ${hasLocal ? localPath : "(none)"}`);
+    console.log(
+      `[nanny merge-vscode-config] local: ${hasLocal ? localPath : "(none)"}`,
+    );
   }
 }
 
@@ -107,7 +125,8 @@ function parseArgs(argv: string[], globalVerbose: boolean): CliOptions {
 
 function requireValue(argv: string[], idx: number, flag: string): string {
   const v = argv[idx];
-  if (!v || v.startsWith("--")) throw new NannyError(`Missing value for ${flag}`, 1);
+  if (!v || v.startsWith("--"))
+    throw new NannyError(`Missing value for ${flag}`, 1);
   return v;
 }
 
@@ -144,7 +163,9 @@ function readJsoncObject(filePath: string, verbose: boolean): JsonObject {
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
     if (verbose) {
-      console.error(`[nanny merge-vscode-config] Failed to parse JSONC: ${filePath}`);
+      console.error(
+        `[nanny merge-vscode-config] Failed to parse JSONC: ${filePath}`,
+      );
       console.error(message);
     }
     throw new NannyError(`Invalid JSONC in ${filePath}: ${message}`, 1);

@@ -3,15 +3,14 @@
 
 import { createRequire } from "node:module";
 import { exit } from "node:process";
-
-import { formatError, NannyError } from "./lib/errors.js";
-import { getFlagValue, hasFlag, stripGlobalFlags } from "./lib/args.js";
-import { runGeneratePackage } from "./commands/generate-package.js";
-import { runUpdatePackage } from "./commands/update-package.js";
-import { runPackageInit } from "./commands/package-init.js";
-import { runMergeVscodeConfig } from "./commands/merge-vscode-config.js";
 import { runCheck } from "./commands/check.js";
 import { runEditorconfig } from "./commands/editorconfig.js";
+import { runGeneratePackage } from "./commands/generate-package.js";
+import { runMergeVscodeConfig } from "./commands/merge-vscode-config.js";
+import { runPackageInit } from "./commands/package-init.js";
+import { runUpdatePackage } from "./commands/update-package.js";
+import { getFlagValue, hasFlag, stripGlobalFlags } from "./lib/args.js";
+import { formatError, NannyError } from "./lib/errors.js";
 
 const require = createRequire(import.meta.url);
 

@@ -47,9 +47,13 @@ const DEFAULT_NANNY_CONFIG: NannyConfig = {
  * @returns The loaded and validated Nanny configuration.
  * @throws NannyError when configuration loading or validation fails.
  */
-export async function loadNannyConfig(options: LoadNannyConfigOptions): Promise<LoadedNannyConfig> {
+export async function loadNannyConfig(
+  options: LoadNannyConfigOptions,
+): Promise<LoadedNannyConfig> {
   const cwd = path.resolve(options.cwd);
-  const packagesDirOverride = getPackagesDirOverride(options.packagesDirOverride);
+  const packagesDirOverride = getPackagesDirOverride(
+    options.packagesDirOverride,
+  );
 
   try {
     const result = await loadConfig({
@@ -62,11 +66,13 @@ export async function loadNannyConfig(options: LoadNannyConfigOptions): Promise<
     const repoConfig = parseNannyConfig(result.config);
     const local = readLocalConfigOverride(cwd);
 
-    const packagesDir = packagesDirOverride ?? local?.packagesDir ?? repoConfig.packagesDir;
+    const packagesDir =
+      packagesDirOverride ?? local?.packagesDir ?? repoConfig.packagesDir;
 
     return {
       config: { packagesDir },
-      configFile: typeof result.configFile === "string" ? result.configFile : null,
+      configFile:
+        typeof result.configFile === "string" ? result.configFile : null,
       localConfigFile: local ? path.resolve(cwd, LOCAL_CONFIG_FILENAME) : null,
       cwd,
     };
@@ -88,7 +94,10 @@ export async function loadNannyConfig(options: LoadNannyConfigOptions): Promise<
  * @returns Parsed JSON object.
  * @throws NannyError when the content is invalid or the root value is not an object.
  */
-export function parseJsoncObject(filePath: string, content: string): JsonObject {
+export function parseJsoncObject(
+  filePath: string,
+  content: string,
+): JsonObject {
   try {
     const parsed = parseJSONC(content) as unknown;
 
@@ -103,7 +112,10 @@ export function parseJsoncObject(filePath: string, content: string): JsonObject 
     }
 
     const message = error instanceof Error ? error.message : String(error);
-    throw new NannyError(`Failed to parse JSONC file ${filePath}: ${message}`, 1);
+    throw new NannyError(
+      `Failed to parse JSONC file ${filePath}: ${message}`,
+      1,
+    );
   }
 }
 
@@ -113,7 +125,9 @@ export function parseJsoncObject(filePath: string, content: string): JsonObject 
  * This file is meant to be gitignored and holds per-machine overrides that
  * take precedence over repo-local config but not over CLI flags or env vars.
  */
-function readLocalConfigOverride(cwd: string): Partial<NannyConfig> | undefined {
+function readLocalConfigOverride(
+  cwd: string,
+): Partial<NannyConfig> | undefined {
   const localPath = path.resolve(cwd, LOCAL_CONFIG_FILENAME);
   if (!fs.existsSync(localPath)) {
     return undefined;
@@ -130,7 +144,9 @@ function readLocalConfigOverride(cwd: string): Partial<NannyConfig> | undefined 
   return { packagesDir: packagesDir.trim() };
 }
 
-function getPackagesDirOverride(cliOverride: string | undefined): string | undefined {
+function getPackagesDirOverride(
+  cliOverride: string | undefined,
+): string | undefined {
   const cliValue = cliOverride?.trim();
 
   if (cliValue && cliValue.length > 0) {
@@ -154,7 +170,10 @@ function parseNannyConfig(value: unknown): NannyConfig {
   const packagesDir = value["packagesDir"];
 
   if (typeof packagesDir !== "string" || packagesDir.trim().length === 0) {
-    throw new NannyError('Invalid nanny config value for "packagesDir": expected a non-empty string.', 1);
+    throw new NannyError(
+      'Invalid nanny config value for "packagesDir": expected a non-empty string.',
+      1,
+    );
   }
 
   return {
