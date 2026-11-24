@@ -24,10 +24,6 @@ const LOCATIONS: Array<[file: string, content: string]> = [
   ["nanny.config.yml", yaml],
   // c12 reads `.nannyrc` with rc9, which uses flat `key=value` lines.
   [".nannyrc", `packagesDir=${DIR}\n`],
-  [".nannyrc.json", json],
-  [".nannyrc.jsonc", jsonc],
-  [".nannyrc.yaml", yaml],
-  [".nannyrc.yml", yaml],
   [".config/nanny.jsonc", jsonc],
 ];
 
@@ -44,12 +40,24 @@ function assertLoadsFrom(files: Record<string, unknown>): void {
 describe("README: Configuration", () => {
   describe("supported configuration locations", () => {
     for (const [file, content] of LOCATIONS) {
-      // c12 3.x does not resolve `.nannyrc.<ext>`: it reads only `.nannyrc` (rc9 format).
-      const todo = file.startsWith(".nannyrc.")
-        ? "README claim is false: c12 does not load this file (#69)"
-        : undefined;
-      it(file, { todo }, () => {
+      it(file, () => {
         assertLoadsFrom({ [file]: content });
+      });
+    }
+
+    for (const [format, content] of [
+      ["JSON", json],
+      ["YAML", yaml],
+    ]) {
+      it(`.nannyrc with ${format} content is not used`, () => {
+        const project = createProject({
+          "package.json": fixturePackage,
+          ".nannyrc": content,
+        });
+        const result = runNanny(["package-init"], { cwd: project });
+        assert.equal(result.status, 0, result.stderr);
+        assert.ok(!exists(project, FRAGMENT));
+        assert.ok(exists(project, "src/packages/system/default.jsonc"));
       });
     }
 

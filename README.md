@@ -57,7 +57,7 @@ echo "NANNY_PACKAGES_DIR=config/package-particles" >> .env
 Notes:
 
 * **Relative paths:** Nanny resolves a relative path against the working directory, not against the config file. So `--cwd` changes where the folder ends up.
-* **Empty or missing values:** Nanny ignores an empty or whitespace-only value from the flag, the environment variable, `.env`, or the local file, and goes to the next level. An empty `packagesDir` in the shared config file is different: it stops with an error (exit code 1).
+* **Empty or missing values:** Nanny ignores an empty or whitespace-only value from the environment variable, `.env`, or the local file, and goes to the next level. It also ignores a whitespace-only flag value. An empty flag value (`--packages-dir ""`) is different: it stops with an error (exit code 1). An empty `packagesDir` in the shared config file also stops with an error (exit code 1).
 
 ## Configuration
 
@@ -77,11 +77,7 @@ Supported configuration locations include:
 * `nanny.config.jsonc`
 * `nanny.config.yaml`
 * `nanny.config.yml`
-* `.nannyrc`
-* `.nannyrc.json`
-* `.nannyrc.jsonc`
-* `.nannyrc.yaml`
-* `.nannyrc.yml`
+* `.nannyrc`, with one `key=value` line for each setting, for example `packagesDir=config/package-particles` (not JSON or YAML)
 * `.config/nanny.jsonc`
 * the `nanny` property in `package.json`
 

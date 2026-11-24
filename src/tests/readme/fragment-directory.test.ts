@@ -217,17 +217,30 @@ describe("README: Fragment directory", () => {
   });
 
   describe("empty or whitespace-only values go to the next level", () => {
+    it("whitespace-only --packages-dir flag", () => {
+      assertInitIn({ flag: "   ", env: "from-env" }, "from-env");
+    });
+
+    for (const command of [
+      "package-init",
+      "generate-package",
+      "update-package",
+      "check",
+    ]) {
+      it(`empty --packages-dir flag stops ${command} with exit code 1`, () => {
+        const project = createProject({ "package.json": fixturePackage });
+        const result = runNanny([command, "--packages-dir", ""], {
+          cwd: project,
+          env: { NANNY_PACKAGES_DIR: "from-env" },
+        });
+        assert.equal(result.status, 1);
+        assert.match(result.stderr, /Missing value for --packages-dir/);
+        assert.ok(!exists(project, `from-env/${FRAGMENT}`));
+      });
+    }
+
     for (const blank of ["", "   "]) {
       const label = blank === "" ? "empty" : "whitespace-only";
-
-      // An empty flag value stops with "Missing value for --packages-dir" (exit 1).
-      const todo =
-        blank === ""
-          ? "README claim is false: an empty flag value is an error (#69)"
-          : undefined;
-      it(`${label} --packages-dir flag`, { todo }, () => {
-        assertInitIn({ flag: blank, env: "from-env" }, "from-env");
-      });
 
       it(`${label} NANNY_PACKAGES_DIR environment variable`, () => {
         assertInitIn({ env: blank, dotenv: "from-dotenv" }, "from-dotenv");
