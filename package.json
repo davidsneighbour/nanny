@@ -37,7 +37,7 @@
     "lint": "npm run lint:markdown && npm run lint:secrets && npm run lint:spelling",
     "lint:markdown": "markdownlint-cli2 \"**/*.{md,mdx}\"",
     "lint:secrets": "dnb-secretlint \"**/*\"",
-    "lint:spelling": "cspell --no-progress .",
+    "lint:spelling": "cspell --no-progress --gitignore .",
     "lint:staged": "lint-staged",
     "prepare": "simple-git-hooks",
     "prepublishOnly": "npm run build",
