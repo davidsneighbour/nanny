@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.6.0](https://github.com/davidsneighbour/nanny/compare/v0.5.0...v0.6.0) (2026-11-24)
+
+### Feat
+
+* **skill:** add nanny package.json management skill ([#37](https://github.com/davidsneighbour/nanny/issues/37)) ([fbba9f2](https://github.com/davidsneighbour/nanny/commit/fbba9f25e62c17c50048766651241e54c2743390)), closes [#36](https://github.com/davidsneighbour/nanny/issues/36)
+
+### Build
+
+* **chore:** add editorconfig ([f9cbef4](https://github.com/davidsneighbour/nanny/commit/f9cbef45f570922e36306e2bf00835963fa51eea))
+* **chore:** configure cspell with en-GB and project dictionary ([9b4bc87](https://github.com/davidsneighbour/nanny/commit/9b4bc871bf58e5083812368323b70da129174e11))
+* **deps-dev:** bump @commitlint/cli from 21.2.1 to 21.2.4 ([#57](https://github.com/davidsneighbour/nanny/issues/57)) ([689de45](https://github.com/davidsneighbour/nanny/commit/689de452f5689e47197180f0f5dd209e38365bf8))
+* **deps-dev:** bump @commitlint/config-conventional ([#58](https://github.com/davidsneighbour/nanny/issues/58)) ([742eaf8](https://github.com/davidsneighbour/nanny/commit/742eaf84bfa481a7381d9b75ea8e23d08824d17c))
+* **deps-dev:** bump @types/node from 26.1.1 to 26.6.6 ([#56](https://github.com/davidsneighbour/nanny/issues/56)) ([5a55726](https://github.com/davidsneighbour/nanny/commit/5a5572664928ab6ade23d574381ce7888a2135d0))
+* **deps-dev:** bump cspell from 10.0.1 to 10.5.1 ([#55](https://github.com/davidsneighbour/nanny/issues/55)) ([1443d78](https://github.com/davidsneighbour/nanny/commit/1443d78eb94b98f5b9ab0213b9e8000e5b9709cd))
+* **deps-dev:** bump simple-git-hooks from 2.13.1 to 2.14.0 ([#51](https://github.com/davidsneighbour/nanny/issues/51)) ([1867eea](https://github.com/davidsneighbour/nanny/commit/1867eeafff644bbc5929224e61c5e4f52322f52c))
+* **deps:** bump actions/checkout from 6.0.2 to 7.0.0 ([#34](https://github.com/davidsneighbour/nanny/issues/34)) ([84bce87](https://github.com/davidsneighbour/nanny/commit/84bce879a1073d72c4d77be1bab152bb12dc68bd))
+* **deps:** bump actions/checkout from 7.0.0 to 7.0.1 ([#35](https://github.com/davidsneighbour/nanny/issues/35)) ([b823212](https://github.com/davidsneighbour/nanny/commit/b823212ffd4c55d9cf588b4617c65f5ae173eeb2))
+* **deps:** bump actions/setup-node from 6.4.0 to 7.0.0 ([#31](https://github.com/davidsneighbour/nanny/issues/31)) ([952c4d7](https://github.com/davidsneighbour/nanny/commit/952c4d7890660bf5dd2d89dd135efbb1986af7ca))
+* **deps:** bump actions/setup-node from 7.0.0 to 7.1.0 ([#54](https://github.com/davidsneighbour/nanny/issues/54)) ([2ec369a](https://github.com/davidsneighbour/nanny/commit/2ec369a55c0090f9dcc4526f53f36129646e465d))
+* **deps:** bump confbox from 0.2.4 to 0.3.2 ([#45](https://github.com/davidsneighbour/nanny/issues/45)) ([1e90a58](https://github.com/davidsneighbour/nanny/commit/1e90a581df8bded6c0cfc9524a9cf6ad9accdfb4))
+* **deps:** bump ip-address ([#38](https://github.com/davidsneighbour/nanny/issues/38)) ([19d8e29](https://github.com/davidsneighbour/nanny/commit/19d8e294460ee2fab3d829ef78b5db1078af4424))
+* **deps:** bump the npm_and_yarn group across 1 directory with 2 updates ([#62](https://github.com/davidsneighbour/nanny/issues/62)) ([2eccb69](https://github.com/davidsneighbour/nanny/commit/2eccb69b3b5a70ea36bcf76c7c04ebfd6988606a))
+* **deps:** bump the npm_and_yarn group across 1 directory with 5 updates ([#60](https://github.com/davidsneighbour/nanny/issues/60)) ([9047544](https://github.com/davidsneighbour/nanny/commit/9047544bce4e5376e514b8fef233e0f4dbeb10e1))
+* **deps:** update dependency node to v26 ([#53](https://github.com/davidsneighbour/nanny/issues/53)) ([7c05232](https://github.com/davidsneighbour/nanny/commit/7c0523263e4dfad8d0433bd836cb15bf7a831789))
+* **deps:** upgrade [@dnbhq](https://github.com/dnbhq) packages and fix markdownlint chain alerts ([#65](https://github.com/davidsneighbour/nanny/issues/65)) ([210f4eb](https://github.com/davidsneighbour/nanny/commit/210f4ebfa9668dce36510b0f6e9d312c6b8be1f3)), references [#63](https://github.com/davidsneighbour/nanny/issues/63)
+
 ## [0.5.0](https://github.com/davidsneighbour/nanny/compare/v0.4.1...v0.5.0) (2026-07-23)
 
 ### Features
