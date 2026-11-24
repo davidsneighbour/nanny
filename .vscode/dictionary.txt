@@ -2,6 +2,7 @@ confbox
 davidsneighbour
 dnbhq
 gomod
+gpgsign
 kollitsch
 lintstaged
 nannyrc

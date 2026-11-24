@@ -13,7 +13,9 @@ npm run check           # single source of passing validation: lint + validate +
 npm run build           # compile TypeScript → dist/
 npm run typecheck       # type-check without emitting
 npm run ci              # typecheck + build (what CI runs)
-npm run test:package-init  # build then run the integration test
+npm test                   # build then run all tests with node:test
+npm run test:readme        # build then run only the README claim tests
+npm run test:package-init  # build then run the package-init roundtrip test
 ```
 
 There is no watch mode. Run `npm run build` before testing changes locally via the CLI.
@@ -60,7 +62,10 @@ The `generate-package` merge preserves a fixed set of keys from the root `packag
 
 ### Testing
 
-The single test (`src/tests/package-init.test.ts`) is an integration test: it builds a temp fixture, shells out to the compiled CLI, and uses Node's `assert.deepEqual` to verify a roundtrip. There is no unit test framework.
+All tests are integration tests that run with the built-in `node:test` runner. They create temporary fixtures, run the compiled CLI, and check the result with `node:assert`. There is no third-party test framework.
+
+* `src/tests/package-init.test.ts` verifies the `package-init` → `generate-package --dry-run` roundtrip.
+* `src/tests/readme/*.test.ts` has one test for each claim in `README.md`, with one file for each README section. Shared fixture helpers are in `src/tests/helpers.ts`. When you change a claim in `README.md`, update the related test in the same change. A test marked `todo` is a claim that is known to be false and is tracked in an issue.
 
 ### Exit codes
 

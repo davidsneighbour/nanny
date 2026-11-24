@@ -31,7 +31,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "check": "npm run check:biome && npm run lint && npm run validate && npm run test:package-init",
+    "check": "npm run check:biome && npm run lint && npm run validate && npm run test",
     "check:biome": "biome check",
     "ci": "npm run typecheck && npm run build",
     "lint": "npm run lint:markdown && npm run lint:secrets && npm run lint:spelling",
@@ -46,7 +46,9 @@
     "release:major": "npm run ci && release-it major --ci",
     "release:minor": "npm run ci && release-it minor --ci",
     "release:patch": "npm run ci && release-it patch --ci",
+    "test": "npm run build && node --test \"dist/tests/**/*.test.js\"",
     "test:package-init": "npm run build && node dist/tests/package-init.test.js",
+    "test:readme": "npm run build && node --test \"dist/tests/readme/*.test.js\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "validate": "npm run validate:types",
     "validate:types": "npm run typecheck"

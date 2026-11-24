@@ -278,8 +278,12 @@ mkdir -p .agents/skills && cp -r skills/nanny .agents/skills/nanny
 ## Tests
 
 ```bash
-npm run test:package-init
+npm test                   # all tests
+npm run test:readme        # only the tests for the claims in this README
+npm run test:package-init  # only the package-init roundtrip test
 ```
+
+The tests use the built-in Node.js test runner (`node:test`). The tests in `src/tests/readme/` check the claims in this README, with one file for each section. Each test runs the compiled CLI against a temporary project. If you change a claim in this README, change the related test too.
 
 The package init test creates a temporary fixture, runs `nanny package-init --packages-dir config/package-particles`, then runs `nanny generate-package --packages-dir config/package-particles --dry-run` and compares the generated object with the original fixture package object. It does not overwrite the repository `package.json`.
 
