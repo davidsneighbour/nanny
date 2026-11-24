@@ -8,13 +8,13 @@
   },
   "dependencies": {
     "c12": "3.3.4",
-    "confbox": "0.3.1",
+    "confbox": "0.3.2",
     "fast-glob": "3.3.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.13",
-    "@commitlint/cli": "21.2.2",
-    "@commitlint/config-conventional": "21.2.2",
+    "@biomejs/biome": "2.6.8",
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
     "@dnbhq/biome-config": "0.3.1",
     "@dnbhq/lintstaged-config": "0.2.1",
     "@dnbhq/markdownlint-config": "0.2.11",
@@ -22,10 +22,10 @@
     "@dnbhq/secretlint-config": "0.1.1",
     "@dnbhq/tsconfig": "0.1.6",
     "@release-it/conventional-changelog": "12.0.0",
-    "@types/node": "26.1.2",
-    "cspell": "10.3.0",
-    "lint-staged": "17.5.1",
-    "release-it": "21.0.2",
+    "@types/node": "26.6.6",
+    "cspell": "10.5.2",
+    "lint-staged": "17.6.2",
+    "release-it": "21.0.3",
     "simple-git-hooks": "2.14.0",
     "typescript": "7.0.2"
   },
@@ -69,6 +69,12 @@
     "markdown-it": "14.3.0",
     "markdownlint-rule-title-case-style": {
       "markdownlint": "0.41.1"
+    },
+    "get-uri": {
+      "basic-ftp": "^6.2.1"
+    },
+    "release-it": {
+      "undici": "^7.29.1"
     }
   },
   "cspell": {
