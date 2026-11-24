@@ -38,7 +38,7 @@ const DEFAULT_NANNY_CONFIG: NannyConfig = {
 /**
  * Loads Nanny configuration, layering repo-local and local overrides.
  *
- * Configuration may be provided through `nanny.config.*`, `.nannyrc.*`,
+ * Configuration may be provided through `nanny.config.*`, `.nannyrc`,
  * `.config/nanny.*`, or the `nanny` property in `package.json` (all
  * repo-local, meant to be committed). A gitignored `nanny.config.local.jsonc`
  * in the working directory, if present, overrides those values for
